@@ -1,9 +1,9 @@
+"use client";
+
 import Link from "next/link";
-import { getAllBookings } from "@/lib/kv";
+import { useBookings } from "@/app/providers";
 import { formatMoney } from "@/lib/pricing";
 import type { Booking } from "@/lib/types";
-
-export const dynamic = "force-dynamic";
 
 const STATUS_STYLE: Record<Booking["status"], string> = {
   pending: "bg-sand-200 text-ink-700",
@@ -29,13 +29,13 @@ const STATUS_LABEL: Record<Booking["status"], string> = {
   cancelled: "Cancelada",
 };
 
-export default async function AdminBookingsPage() {
-  const bookings = await getAllBookings();
+export default function AdminBookingsPage() {
+  const { bookings } = useBookings();
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <h1 className="font-display text-2xl font-bold text-ink-900">Reservas</h1>
-      <p className="text-sm text-ink-700">{bookings.length} reservas en total</p>
+      <p className="text-sm text-ink-700">{bookings.length} reservas en total (en esta sesión del navegador)</p>
 
       <div className="mt-5 overflow-x-auto rounded-2xl border border-sand-200 bg-white">
         <table className="w-full min-w-[720px] text-left text-sm">

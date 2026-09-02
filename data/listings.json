@@ -1,0 +1,247 @@
+[
+  {
+    "id": "cb-apartment-01",
+    "destination": "costa-brava",
+    "destinationLabel": "Costa Brava",
+    "title": "Apartamento con balcón frente al mar",
+    "type": "Apartamento",
+    "pricePerNightEur": 118,
+    "rating": 4.8,
+    "reviewCount": 214,
+    "maxGuests": 4,
+    "bedrooms": 2,
+    "freeCancellation": true,
+    "amenities": [
+      "sea-view",
+      "wifi",
+      "kitchen"
+    ],
+    "images": [
+      "/images/costa-brava-apartment-interior.jpg",
+      "/images/hero-banner.jpg"
+    ],
+    "description": "Luminoso apartamento a dos minutos a pie de la cala, con balcón privado y vistas al Mediterráneo. Ideal para desconectar en pareja o en familia.",
+    "hostName": "Marta"
+  },
+  {
+    "id": "cb-villa-01",
+    "destination": "costa-brava",
+    "destinationLabel": "Costa Brava",
+    "title": "Villa con piscina privada sobre la cala",
+    "type": "Villa",
+    "pricePerNightEur": 295,
+    "rating": 4.9,
+    "reviewCount": 96,
+    "maxGuests": 8,
+    "bedrooms": 4,
+    "freeCancellation": true,
+    "amenities": [
+      "pool",
+      "sea-view",
+      "wifi",
+      "parking"
+    ],
+    "images": [
+      "/images/costa-brava-villa-pool.jpg",
+      "/images/hero-banner.jpg"
+    ],
+    "description": "Villa exclusiva con piscina infinita, terrazas escalonadas y acceso directo a una cala rocosa. Perfecta para grupos que buscan intimidad y vistas de postal.",
+    "hostName": "Jordi"
+  },
+  {
+    "id": "and-casa-01",
+    "destination": "andalucia",
+    "destinationLabel": "Andalucía",
+    "title": "Casa rural con patio andaluz",
+    "type": "Casa rural",
+    "pricePerNightEur": 96,
+    "rating": 4.7,
+    "reviewCount": 178,
+    "maxGuests": 6,
+    "bedrooms": 3,
+    "freeCancellation": true,
+    "amenities": [
+      "pet-friendly",
+      "wifi",
+      "kitchen",
+      "parking"
+    ],
+    "images": [
+      "/images/andalucia-casa-rural-courtyard.jpg",
+      "/images/andalucia-white-village-house.jpg"
+    ],
+    "description": "Casa tradicional restaurada con un patio interior lleno de geranios y una fuente central. A pasos de la plaza del pueblo blanco.",
+    "hostName": "Rocío"
+  },
+  {
+    "id": "and-house-01",
+    "destination": "andalucia",
+    "destinationLabel": "Andalucía",
+    "title": "Casa blanca en pueblo con encanto",
+    "type": "Casa rural",
+    "pricePerNightEur": 84,
+    "rating": 4.6,
+    "reviewCount": 132,
+    "maxGuests": 4,
+    "bedrooms": 2,
+    "freeCancellation": false,
+    "amenities": [
+      "pet-friendly",
+      "wifi",
+      "parking"
+    ],
+    "images": [
+      "/images/andalucia-white-village-house.jpg",
+      "/images/andalucia-casa-rural-courtyard.jpg"
+    ],
+    "description": "Casa encalada en una calle empedrada de un pueblo blanco, con macetas de flores en cada balcón y un ambiente auténticamente andaluz.",
+    "hostName": "Rocío"
+  },
+  {
+    "id": "alg-villa-01",
+    "destination": "algarve",
+    "destinationLabel": "Algarve",
+    "title": "Villa moderna con piscina infinita",
+    "type": "Villa",
+    "pricePerNightEur": 340,
+    "rating": 4.9,
+    "reviewCount": 154,
+    "maxGuests": 8,
+    "bedrooms": 4,
+    "freeCancellation": true,
+    "amenities": [
+      "pool",
+      "sea-view",
+      "wifi",
+      "parking"
+    ],
+    "images": [
+      "/images/algarve-villa-infinity-pool.jpg",
+      "/images/algarve-apartment-bright-interior.jpg"
+    ],
+    "description": "Arquitectura minimalista frente a los acantilados del Algarve, con una piscina infinita que parece fundirse con el océano.",
+    "hostName": "Miguel"
+  },
+  {
+    "id": "alg-apartment-01",
+    "destination": "algarve",
+    "destinationLabel": "Algarve",
+    "title": "Apartamento luminoso junto a la playa",
+    "type": "Apartamento",
+    "pricePerNightEur": 102,
+    "rating": 4.5,
+    "reviewCount": 201,
+    "maxGuests": 3,
+    "bedrooms": 1,
+    "freeCancellation": true,
+    "amenities": [
+      "sea-view",
+      "wifi",
+      "kitchen"
+    ],
+    "images": [
+      "/images/algarve-apartment-bright-interior.jpg",
+      "/images/algarve-villa-infinity-pool.jpg"
+    ],
+    "description": "Apartamento acogedor con maderas claras y textiles artesanales, a un corto paseo de las mejores playas del Algarve.",
+    "hostName": "Miguel"
+  },
+  {
+    "id": "srd-villa-01",
+    "destination": "sardinia",
+    "destinationLabel": "Cerdeña",
+    "title": "Villa de piedra con pérgola y viñedo",
+    "type": "Villa",
+    "pricePerNightEur": 210,
+    "rating": 4.8,
+    "reviewCount": 88,
+    "maxGuests": 6,
+    "bedrooms": 3,
+    "freeCancellation": true,
+    "amenities": [
+      "pool",
+      "pet-friendly",
+      "wifi",
+      "parking"
+    ],
+    "images": [
+      "/images/sardinia-villa-pergola.jpg",
+      "/images/sardinia-seaview-terrace.jpg"
+    ],
+    "description": "Villa de piedra rodeada de pinos y viñedos, con una pérgola cubierta de vid perfecta para cenas al aire libre.",
+    "hostName": "Elena"
+  },
+  {
+    "id": "srd-terrace-01",
+    "destination": "sardinia",
+    "destinationLabel": "Cerdeña",
+    "title": "Apartamento con terraza y vistas al mar",
+    "type": "Apartamento",
+    "pricePerNightEur": 128,
+    "rating": 4.7,
+    "reviewCount": 143,
+    "maxGuests": 4,
+    "bedrooms": 2,
+    "freeCancellation": true,
+    "amenities": [
+      "sea-view",
+      "wifi",
+      "kitchen"
+    ],
+    "images": [
+      "/images/sardinia-seaview-terrace.jpg",
+      "/images/sardinia-villa-pergola.jpg"
+    ],
+    "description": "Terraza privada sobre los acantilados de granito, con vistas al mar turquesa de Cerdeña desde el café de la mañana.",
+    "hostName": "Elena"
+  },
+  {
+    "id": "gr-cycladic-01",
+    "destination": "greek-islands",
+    "destinationLabel": "Islas Griegas",
+    "title": "Casa cícladas de estilo clásico",
+    "type": "Casa rural",
+    "pricePerNightEur": 156,
+    "rating": 4.9,
+    "reviewCount": 167,
+    "maxGuests": 5,
+    "bedrooms": 2,
+    "freeCancellation": true,
+    "amenities": [
+      "sea-view",
+      "wifi",
+      "kitchen"
+    ],
+    "images": [
+      "/images/greek-island-cycladic-house.jpg",
+      "/images/greek-island-poolside-sea-view.jpg"
+    ],
+    "description": "Casa cúbica encalada con puertas y postigos azul cielo, escalones de piedra y el Egeo asomando al fondo de la calle.",
+    "hostName": "Dimitra"
+  },
+  {
+    "id": "gr-pool-01",
+    "destination": "greek-islands",
+    "destinationLabel": "Islas Griegas",
+    "title": "Terraza con piscina privada frente al Egeo",
+    "type": "Villa",
+    "pricePerNightEur": 265,
+    "rating": 4.9,
+    "reviewCount": 121,
+    "maxGuests": 6,
+    "bedrooms": 3,
+    "freeCancellation": false,
+    "amenities": [
+      "pool",
+      "sea-view",
+      "wifi",
+      "parking"
+    ],
+    "images": [
+      "/images/greek-island-poolside-sea-view.jpg",
+      "/images/greek-island-cycladic-house.jpg"
+    ],
+    "description": "Piscina privada en una terraza encalada con vistas a las islas vecinas. El lugar perfecto para ver el atardecer del Egeo.",
+    "hostName": "Dimitra"
+  }
+]

@@ -3,15 +3,11 @@ import PopularSearchPills from "@/components/PopularSearchPills";
 import DestinationGrid from "@/components/DestinationGrid";
 import PropertyCard from "@/components/PropertyCard";
 import HostCtaBanner from "@/components/HostCtaBanner";
-import { ensureSeeded } from "@/lib/ensure-seed";
-import { getAllListings } from "@/lib/kv";
+import listings from "@/data/listings.json";
+import type { Listing } from "@/lib/types";
 
-export const dynamic = "force-dynamic";
-
-export default async function HomePage() {
-  await ensureSeeded();
-  const listings = await getAllListings();
-  const featured = listings.filter((l) => l.rating >= 4.8).slice(0, 6);
+export default function HomePage() {
+  const featured = (listings as Listing[]).filter((l) => l.rating >= 4.8).slice(0, 6);
 
   return (
     <div>

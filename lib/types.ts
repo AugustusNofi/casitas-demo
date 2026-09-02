@@ -37,6 +37,7 @@ export type BookingStatus =
   | "cancelled";
 
 export type PaymentFlow = "instant" | "deposit" | "security_deposit";
+export type OpenOrderMode = PaymentFlow;
 
 export interface TimelineEvent {
   id: string;

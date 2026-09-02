@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCurrency } from "./CurrencyProvider";
+import { useBookings } from "@/app/providers";
 import { convertFromEur, formatMoney } from "@/lib/pricing";
 import type { Listing } from "@/lib/types";
 
@@ -15,12 +16,12 @@ function defaultDate(offsetDays: number) {
 export default function BookingWidget({ listing }: { listing: Listing }) {
   const router = useRouter();
   const { currency } = useCurrency();
+  const { createBooking } = useBookings();
   const [checkIn, setCheckIn] = useState(defaultDate(21));
   const [checkOut, setCheckOut] = useState(defaultDate(26));
   const [guests, setGuests] = useState(2);
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const nights = useMemo(() => {
@@ -32,35 +33,34 @@ export default function BookingWidget({ listing }: { listing: Listing }) {
 
   const totalEur = nights * listing.pricePerNightEur;
 
-  async function handleReserve(e: React.FormEvent) {
+  function handleReserve(e: React.FormEvent) {
     e.preventDefault();
     if (!guestName || !guestEmail) {
       setError("Indica tu nombre y correo electrónico para continuar.");
       return;
     }
-    setSubmitting(true);
     setError(null);
-    try {
-      const res = await fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          listingId: listing.id,
-          checkIn,
-          checkOut,
-          guests,
-          guestName,
-          guestEmail,
-          currency,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "No se pudo crear la reserva");
-      router.push(`/checkout/${data.booking.id}`);
-    } catch {
-      setError("Ha ocurrido un error al crear la reserva. Inténtalo de nuevo.");
-      setSubmitting(false);
-    }
+
+    const checkInDate = new Date(checkIn);
+    const freeCancellationUntil = listing.freeCancellation
+      ? new Date(checkInDate.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()
+      : new Date().toISOString();
+
+    const booking = createBooking({
+      listingId: listing.id,
+      listingTitle: listing.title,
+      checkIn,
+      checkOut,
+      guests,
+      guestName,
+      guestEmail,
+      currency,
+      totalAmount: totalEur,
+      freeCancellationUntil,
+      securityDepositAmount: 250,
+    });
+
+    router.push(`/checkout/${booking.id}`);
   }
 
   return (
@@ -140,10 +140,9 @@ export default function BookingWidget({ listing }: { listing: Listing }) {
 
       <button
         type="submit"
-        disabled={submitting}
-        className="mt-4 w-full rounded-full bg-coral-500 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-coral-600 disabled:opacity-60"
+        className="mt-4 w-full rounded-full bg-coral-500 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-coral-600"
       >
-        {submitting ? "Creando reserva…" : "Reservar"}
+        Reservar
       </button>
       <p className="mt-2 text-center text-[11px] text-ink-700">No se te cobrará todavía</p>
     </form>

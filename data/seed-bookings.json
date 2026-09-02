@@ -1,0 +1,293 @@
+[
+  {
+    "booking": {
+      "id": "demo-paid-full",
+      "listingId": "cb-villa-01",
+      "listingTitle": "Villa con piscina privada sobre la cala",
+      "guestName": "Carlos Ibáñez",
+      "guestEmail": "carlos.ibanez@example.com",
+      "checkIn": "2026-09-16T17:47:52.899Z",
+      "checkOut": "2026-09-21T17:47:52.899Z",
+      "guests": 2,
+      "nights": 5,
+      "currency": "EUR",
+      "totalAmount": 1475,
+      "status": "paid_in_full",
+      "flow": "instant",
+      "freeCancellationUntil": "2026-09-09T17:47:52.899Z",
+      "cancellationPolicyPct": 50,
+      "transactionIds": {
+        "sale": "DEMO-SEED-TXN-001"
+      },
+      "createdAt": "2026-09-02T17:47:52.898Z",
+      "updatedAt": "2026-09-02T17:47:52.898Z"
+    },
+    "events": [
+      {
+        "id": "e1",
+        "bookingId": "demo-paid-full",
+        "type": "booking_created",
+        "label": "Reserva creada",
+        "source": "guest",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      },
+      {
+        "id": "e2",
+        "bookingId": "demo-paid-full",
+        "type": "settled",
+        "label": "Pago completo liquidado",
+        "amount": 1475,
+        "currency": "EUR",
+        "transactionId": "DEMO-SEED-TXN-001",
+        "source": "system",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      }
+    ]
+  },
+  {
+    "booking": {
+      "id": "demo-deposit",
+      "listingId": "alg-villa-01",
+      "listingTitle": "Villa moderna con piscina infinita",
+      "guestName": "Sophie Dubois",
+      "guestEmail": "sophie.dubois@example.com",
+      "checkIn": "2026-09-16T17:47:52.899Z",
+      "checkOut": "2026-09-21T17:47:52.899Z",
+      "guests": 2,
+      "nights": 5,
+      "currency": "EUR",
+      "totalAmount": 1700,
+      "status": "deposit_paid",
+      "flow": "deposit",
+      "freeCancellationUntil": "2026-09-09T17:47:52.899Z",
+      "cancellationPolicyPct": 50,
+      "transactionIds": {
+        "deposit": "DEMO-SEED-TXN-002"
+      },
+      "createdAt": "2026-09-02T17:47:52.898Z",
+      "updatedAt": "2026-09-02T17:47:52.898Z",
+      "depositAmount": 510,
+      "balanceAmount": 1190,
+      "balanceScheduledFor": "2026-09-07T17:47:52.899Z",
+      "userTokenId": "demo-deposit",
+      "userPaymentOptionId": "demo-upo-1",
+      "cardLast4": "1164",
+      "cardBrand": "VISA"
+    },
+    "events": [
+      {
+        "id": "e1",
+        "bookingId": "demo-deposit",
+        "type": "booking_created",
+        "label": "Reserva creada",
+        "source": "guest",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      },
+      {
+        "id": "e2",
+        "bookingId": "demo-deposit",
+        "type": "deposit_charged",
+        "label": "Depósito del 30% cobrado",
+        "amount": 510,
+        "currency": "EUR",
+        "transactionId": "DEMO-SEED-TXN-002",
+        "source": "system",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      },
+      {
+        "id": "e3",
+        "bookingId": "demo-deposit",
+        "type": "balance_scheduled",
+        "label": "Cobro del saldo programado",
+        "detail": "Se ejecutará automáticamente con la tarjeta guardada",
+        "source": "system",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      }
+    ]
+  },
+  {
+    "booking": {
+      "id": "demo-hold",
+      "listingId": "gr-pool-01",
+      "listingTitle": "Terraza con piscina privada frente al Egeo",
+      "guestName": "Anna Meyer",
+      "guestEmail": "anna.meyer@example.com",
+      "checkIn": "2026-09-16T17:47:52.899Z",
+      "checkOut": "2026-09-21T17:47:52.899Z",
+      "guests": 2,
+      "nights": 5,
+      "currency": "EUR",
+      "totalAmount": 1325,
+      "status": "hold_active",
+      "flow": "security_deposit",
+      "freeCancellationUntil": "2026-09-09T17:47:52.899Z",
+      "cancellationPolicyPct": 50,
+      "transactionIds": {
+        "hold": "DEMO-SEED-TXN-003"
+      },
+      "createdAt": "2026-09-02T17:47:52.898Z",
+      "updatedAt": "2026-09-02T17:47:52.898Z",
+      "securityDepositAmount": 250,
+      "holdTransactionId": "DEMO-SEED-TXN-003"
+    },
+    "events": [
+      {
+        "id": "e1",
+        "bookingId": "demo-hold",
+        "type": "booking_created",
+        "label": "Reserva creada",
+        "source": "guest",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      },
+      {
+        "id": "e2",
+        "bookingId": "demo-hold",
+        "type": "hold_placed",
+        "label": "Retención de fianza autorizada",
+        "amount": 250,
+        "currency": "EUR",
+        "transactionId": "DEMO-SEED-TXN-003",
+        "source": "system",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      }
+    ]
+  },
+  {
+    "booking": {
+      "id": "demo-refunded",
+      "listingId": "and-casa-01",
+      "listingTitle": "Casa rural con patio andaluz",
+      "guestName": "Tom Bakker",
+      "guestEmail": "tom.bakker@example.com",
+      "checkIn": "2026-09-16T17:47:52.899Z",
+      "checkOut": "2026-09-21T17:47:52.899Z",
+      "guests": 2,
+      "nights": 5,
+      "currency": "EUR",
+      "totalAmount": 480,
+      "status": "refunded",
+      "flow": "instant",
+      "freeCancellationUntil": "2026-09-09T17:47:52.899Z",
+      "cancellationPolicyPct": 50,
+      "transactionIds": {
+        "sale": "DEMO-SEED-TXN-004",
+        "refund": "DEMO-SEED-TXN-004R"
+      },
+      "createdAt": "2026-09-02T17:47:52.898Z",
+      "updatedAt": "2026-09-02T17:47:52.898Z",
+      "refundedAmount": 480
+    },
+    "events": [
+      {
+        "id": "e1",
+        "bookingId": "demo-refunded",
+        "type": "booking_created",
+        "label": "Reserva creada",
+        "source": "guest",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      },
+      {
+        "id": "e2",
+        "bookingId": "demo-refunded",
+        "type": "settled",
+        "label": "Pago completo liquidado",
+        "amount": 480,
+        "currency": "EUR",
+        "transactionId": "DEMO-SEED-TXN-004",
+        "source": "system",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      },
+      {
+        "id": "e3",
+        "bookingId": "demo-refunded",
+        "type": "cancelled",
+        "label": "Cancelada dentro del plazo gratuito",
+        "source": "guest",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      },
+      {
+        "id": "e4",
+        "bookingId": "demo-refunded",
+        "type": "refunded",
+        "label": "Reembolso completo procesado",
+        "amount": 480,
+        "currency": "EUR",
+        "transactionId": "DEMO-SEED-TXN-004R",
+        "source": "system",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      }
+    ]
+  },
+  {
+    "booking": {
+      "id": "demo-pending",
+      "listingId": "srd-villa-01",
+      "listingTitle": "Villa de piedra con pérgola y viñedo",
+      "guestName": "Marco Rossi",
+      "guestEmail": "marco.rossi@example.com",
+      "checkIn": "2026-09-16T17:47:52.899Z",
+      "checkOut": "2026-09-21T17:47:52.899Z",
+      "guests": 2,
+      "nights": 5,
+      "currency": "EUR",
+      "totalAmount": 1050,
+      "status": "pending",
+      "flow": "instant",
+      "freeCancellationUntil": "2026-09-09T17:47:52.899Z",
+      "cancellationPolicyPct": 50,
+      "transactionIds": {},
+      "createdAt": "2026-09-02T17:47:52.898Z",
+      "updatedAt": "2026-09-02T17:47:52.898Z"
+    },
+    "events": [
+      {
+        "id": "e1",
+        "bookingId": "demo-pending",
+        "type": "booking_created",
+        "label": "Reserva creada, pago pendiente",
+        "source": "guest",
+        "createdAt": "2026-09-02T17:47:52.898Z"
+      }
+    ]
+  },
+  {
+    "booking": {
+      "id": "demo-cancelled",
+      "listingId": "gr-cycladic-01",
+      "listingTitle": "Casa cícladas de estilo clásico",
+      "guestName": "Nadia Kowalski",
+      "guestEmail": "nadia.kowalski@example.com",
+      "checkIn": "2026-09-16T17:47:52.899Z",
+      "checkOut": "2026-09-21T17:47:52.899Z",
+      "guests": 3,
+      "nights": 5,
+      "currency": "EUR",
+      "totalAmount": 780,
+      "status": "cancelled",
+      "flow": "instant",
+      "freeCancellationUntil": "2026-09-09T17:47:52.899Z",
+      "cancellationPolicyPct": 50,
+      "transactionIds": {},
+      "createdAt": "2026-09-01T17:47:52.898Z",
+      "updatedAt": "2026-09-01T18:10:00.000Z"
+    },
+    "events": [
+      {
+        "id": "e1",
+        "bookingId": "demo-cancelled",
+        "type": "booking_created",
+        "label": "Reserva creada, pago pendiente",
+        "source": "guest",
+        "createdAt": "2026-09-01T17:47:52.898Z"
+      },
+      {
+        "id": "e2",
+        "bookingId": "demo-cancelled",
+        "type": "cancelled",
+        "label": "Reserva cancelada antes de completar el pago",
+        "source": "guest",
+        "createdAt": "2026-09-01T18:10:00.000Z"
+      }
+    ]
+  }
+]

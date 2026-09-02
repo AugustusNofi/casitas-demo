@@ -5,13 +5,16 @@ first, privately, before presenting.
 
 ## Before the room: smoke test
 
-1. Open the deployed URL. Confirm the sandbox banner shows at the top.
-2. Go to a listing → Reservar → checkout. Confirm the Nuvei widget actually renders (this is the
-   one integration point that couldn't be triple-verified against docs during the build — see
-   README "Known scope notes"). If it doesn't render, open the browser console for the error.
-3. Run one real card payment through with a Nuvei sandbox test card and confirm the booking
-   flips to "paid" and a timeline event appears — this proves the DMN webhook is reachable.
-4. Log into `/admin` with your `ADMIN_PASSCODE` and confirm the booking shows up.
+1. Open the deployed URL in a fresh browser tab. Confirm the sandbox banner shows at the top,
+   and that `/admin` already lists the seeded demo bookings (loaded from
+   `data/seed-bookings.json` — no setup step needed).
+2. Go to a listing → Reservar → checkout. Confirm the Nuvei widget actually renders.
+3. Run one real card payment through with a Nuvei sandbox test card and confirm it lands on the
+   confirmation page and the booking's timeline shows the new event — this all happens
+   client-side via the widget's `onResult` callback, so this also proves that's wired up.
+4. Log into `/admin` with your `ADMIN_PASSCODE` and confirm that same booking shows up. Note
+   this state is per-browser-tab (`sessionStorage`) — refreshing keeps it, but a different
+   browser/device won't see it. Do the whole demo in one tab.
 
 ## 1. Search & browse (context-setting, ~1 min)
 
@@ -69,9 +72,11 @@ first, privately, before presenting.
 
 ## 7. Wrap-up (~1 min)
 
-- Back in `/admin`, show the bookings table with the full spread of statuses now present, and
-  the raw Nuvei/DMN transaction log on one booking's detail page as evidence every state change
-  is driven by real Nuvei server-to-server notifications, not client-side trust.
+- Back in `/admin`, show the bookings table with the full spread of statuses now present
+  (pending, deposit paid, paid in full, hold active, refunded, cancelled), and point out that
+  every transaction id shown on a booking detail page is a real id Nuvei returned — the app has
+  no database of its own, it's all state in this browser tab kept in sync with what Nuvei
+  actually did.
 
 ## Test cards / methods
 

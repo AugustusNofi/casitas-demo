@@ -2,11 +2,13 @@ import crypto from "crypto";
 
 // Nuvei REST API v1 — used for /openOrder (paired with Simply Connect 1.0's checkout()
 // on the frontend) plus the server-side financial operations (settle/void/refund) that
-// the back office triggers. All calls happen only in server route handlers.
+// the back office triggers. Every function here is a stateless proxy: it talks to Nuvei
+// and returns the raw result — no store of any kind. All calls happen only in server route
+// handlers, since they need the merchant secret key.
 //
 // Docs consulted: docs.nuvei.com — Simply Connect Quick Start, Financial Operations
-// (Auth & Settle, Void, Refund), Card Operations (Zero Authorization, PCI & Tokenization),
-// Webhooks (DMN). Host + checksum formula verified against the real sandbox account.
+// (Auth & Settle, Void, Refund), Card Operations (Zero Authorization, PCI & Tokenization).
+// Host + every checksum formula below verified live against the real sandbox account.
 
 const HOSTS: Record<string, string> = {
   int: "https://ppp-test.nuvei.com/ppp/api/v1",
@@ -68,14 +70,6 @@ export interface OpenOrderParams {
   currency: string;
   userTokenId?: string;
   transactionType?: "Sale" | "Auth";
-  notificationUrl?: string;
-  successUrl?: string;
-  failureUrl?: string;
-  pendingUrl?: string;
-  // Nuvei's DMN payload isn't confirmed to echo back userTokenId, but it does echo
-  // merchant_unique_id — so callers should pass a value they can parse a booking id back
-  // out of. Falls back to a random id if omitted.
-  clientUniqueId?: string;
 }
 
 export async function openOrder(params: OpenOrderParams) {
@@ -83,7 +77,7 @@ export async function openOrder(params: OpenOrderParams) {
   if (!cfg) throw new Error("Nuvei not configured");
 
   const clientRequestId = uniqueId("req");
-  const clientUniqueId = params.clientUniqueId || uniqueId("ord");
+  const clientUniqueId = uniqueId("ord");
   const ts = timeStamp();
   const raw =
     cfg.merchantId + cfg.merchantSiteId + clientRequestId + params.amount + params.currency + ts + cfg.secretKey;
@@ -101,14 +95,6 @@ export async function openOrder(params: OpenOrderParams) {
   };
   if (params.userTokenId) body.userTokenId = params.userTokenId;
   if (params.transactionType) body.transactionType = params.transactionType;
-  if (params.notificationUrl || params.successUrl || params.failureUrl || params.pendingUrl) {
-    body.urlDetails = {
-      notificationUrl: params.notificationUrl,
-      successUrl: params.successUrl,
-      failureUrl: params.failureUrl,
-      pendingUrl: params.pendingUrl,
-    };
-  }
 
   const { json } = await post("/openOrder.do", body);
   return json as {
@@ -249,9 +235,4 @@ export async function chargeStoredPaymentOption(params: {
     transactionId?: string;
     reason?: string;
   };
-}
-
-export function getDmnNotificationUrl() {
-  const base = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  return `${base.replace(/\/$/, "")}/api/webhooks/nuvei/dmn`;
 }

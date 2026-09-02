@@ -1,17 +1,24 @@
-import { notFound } from "next/navigation";
-import { getBooking, getTimeline, getTransactionLog } from "@/lib/kv";
+"use client";
+
+import { use } from "react";
+import { useBookings } from "@/app/providers";
 import { formatMoney } from "@/lib/pricing";
 import Timeline from "@/components/Timeline";
 import AdminBookingActions from "@/components/AdminBookingActions";
 
-export const dynamic = "force-dynamic";
+export default function AdminBookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const { getBooking, getTimeline } = useBookings();
+  const booking = getBooking(id);
+  const timeline = getTimeline(id);
 
-export default async function AdminBookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const booking = await getBooking(id);
-  if (!booking) notFound();
-  const timeline = await getTimeline(id);
-  const txnLog = await getTransactionLog(id);
+  if (!booking) {
+    return (
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 text-ink-700">
+        No se encuentra esta reserva en esta sesión del navegador.
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -49,23 +56,6 @@ export default async function AdminBookingDetailPage({ params }: { params: Promi
         <div>
           <h2 className="mb-3 font-display text-lg font-bold text-ink-900">Acciones</h2>
           <AdminBookingActions booking={booking} />
-
-          <h2 className="mb-3 mt-6 font-display text-lg font-bold text-ink-900">
-            Registro sin procesar (Nuvei) · {txnLog.length} eventos
-          </h2>
-          <div className="max-h-64 space-y-2 overflow-y-auto rounded-2xl border border-sand-200 bg-ink-900 p-3">
-            {txnLog.length === 0 && <p className="text-xs text-sand-100/70">Sin llamadas registradas todavía.</p>}
-            {txnLog.map((t, i) => (
-              <details key={i} className="text-xs text-sand-100">
-                <summary className="cursor-pointer font-mono">
-                  {new Date(t.at).toLocaleTimeString("es-ES")} · {t.kind}
-                </summary>
-                <pre className="mt-1 whitespace-pre-wrap break-all text-[10px] text-teal-300">
-                  {JSON.stringify(t.payload, null, 2)}
-                </pre>
-              </details>
-            ))}
-          </div>
         </div>
 
         <div>

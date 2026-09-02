@@ -1,11 +1,8 @@
 import SearchBar from "@/components/SearchBar";
 import PropertyCard from "@/components/PropertyCard";
-import { ensureSeeded } from "@/lib/ensure-seed";
-import { getAllListings } from "@/lib/kv";
+import listingsData from "@/data/listings.json";
 import { DESTINATIONS } from "@/lib/fixtures";
 import type { Listing } from "@/lib/types";
-
-export const dynamic = "force-dynamic";
 
 interface SearchPageProps {
   searchParams: Promise<{
@@ -18,10 +15,8 @@ interface SearchPageProps {
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
-  await ensureSeeded();
-  const allListings = await getAllListings();
+  let listings = listingsData as Listing[];
 
-  let listings = allListings;
   if (params.destination) {
     listings = listings.filter((l) => l.destination === params.destination);
   }

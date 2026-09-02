@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Baloo_2, Inter } from "next/font/google";
 import "./globals.css";
 import { CurrencyProvider } from "@/components/CurrencyProvider";
+import { BookingsProvider } from "@/app/providers";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import SandboxBanner from "@/components/SandboxBanner";
@@ -28,10 +29,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="es" className={`${baloo.variable} ${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-sand-50 text-ink-900">
         <CurrencyProvider>
-          <SandboxBanner />
-          <Nav />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <BookingsProvider>
+            <SandboxBanner />
+            <Nav />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </BookingsProvider>
         </CurrencyProvider>
       </body>
     </html>

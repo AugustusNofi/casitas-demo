@@ -1,9 +1,7 @@
 import { notFound } from "next/navigation";
-import { ensureSeeded } from "@/lib/ensure-seed";
-import { getListing } from "@/lib/kv";
+import listingsData from "@/data/listings.json";
+import type { Listing } from "@/lib/types";
 import BookingWidget from "@/components/BookingWidget";
-
-export const dynamic = "force-dynamic";
 
 const AMENITY_LABEL: Record<string, { label: string; icon: string }> = {
   pool: { label: "Piscina privada", icon: "/images/icon-pool.png" },
@@ -16,8 +14,7 @@ const AMENITY_LABEL: Record<string, { label: string; icon: string }> = {
 
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  await ensureSeeded();
-  const listing = await getListing(id);
+  const listing = (listingsData as Listing[]).find((l) => l.id === id);
   if (!listing) notFound();
 
   return (

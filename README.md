@@ -25,29 +25,29 @@ card format) but no Holidu branding, copy, or photos are used — this is an ori
    actual amount charged at checkout (display/charge currency vs. the merchant's settlement
    currency).
 
-A small **Casitas Payments** back office (`/admin`) shows all bookings, a Nuvei-DMN-driven
-payment lifecycle timeline per booking, the raw transaction/DMN log, and the action buttons for
-flows 2–4.
+A small **Casitas Payments** back office (`/admin`) shows all bookings, a payment lifecycle
+timeline per booking, and the action buttons for flows 2–4.
 
-## Tech stack
+## Tech stack — no external database
 
 - Next.js 16 (App Router) + TypeScript + Tailwind CSS v4.
-- Server logic in Route Handlers under `app/api/*`.
-- `lib/nuvei.ts` — direct REST API v1 calls (checksum computed with Node's `crypto`) for
-  `openOrder`, `settleTransaction`, `voidTransaction`, `refundTransaction`, and rebilling a
-  stored payment option. (Note: the brief referenced an `nuvei-server-nodejs` npm package —
-  it doesn't exist on the registry, so this talks to Nuvei's REST v1 API directly instead.)
+- **All booking state lives in the browser.** `app/providers.tsx` (`BookingsProvider`) holds it
+  in React state, seeded on first load from `data/seed-bookings.json`, and persists it to
+  `sessionStorage` — a refresh mid-demo keeps everything, a fresh tab starts clean from the
+  seed data. There is no server-side database: `data/listings.json` and
+  `data/seed-bookings.json` ship as static files in the repo, and that's the entire "backend."
+- `app/api/nuvei/*` are **stateless proxies** — `open-order`, `capture`, `void`, `refund`,
+  `rebill`. Each one takes exactly what it needs, calls Nuvei via `lib/nuvei.ts` (direct REST
+  API v1 calls, checksum computed with Node's `crypto`), and returns the raw result. None of
+  them read or write anything — the client (`BookingsProvider`'s actions) receives the response
+  and updates its own state with the real Nuvei transaction id / status.
+  (Note: the brief referenced an `nuvei-server-nodejs` npm package — it doesn't exist on the
+  registry, so this talks to Nuvei's REST v1 API directly instead.)
 - Nuvei Web SDK (Simply Connect 1.0: `/openOrder` → `sessionToken` → frontend `checkout()`)
-  renders the actual payment UI in `components/NuveiCheckout.tsx`.
-- Nuvei DMN webhook (`/api/webhooks/nuvei/dmn`) is the **authoritative** source of truth for
-  status changes — correlated back to a booking via `userTokenId`, which every `/openOrder`
-  call sets to the booking id. The browser redirect after checkout is just UX polling; DMN is
-  what actually updates state.
-- Vercel-managed Redis (Upstash, via `@upstash/redis`) for listings/bookings/timeline
-  events/transaction log. Falls back to an in-memory store per process when unconfigured, so
-  `next dev` still runs without it — but note that fallback is **not reliable across Next.js's
-  separate route bundles in dev**, so provision real Redis before doing anything beyond a quick
-  look.
+  renders the actual payment UI in `components/NuveiCheckout.tsx`. Completion is driven by the
+  widget's `events.onResult` callback (verified against Nuvei's actual `checkout.js` bundle),
+  which the calling component uses to update `BookingsProvider` state directly — there's no
+  DMN webhook or server-side polling, since there's no store for either to update.
 
 ## Setup
 
@@ -65,9 +65,9 @@ Required in `.env`:
 | `NUVEI_MERCHANT_ID`, `NUVEI_MERCHANT_SITE_ID`, `NUVEI_SECRET_KEY` | Nuvei sandbox merchant account |
 | `NUVEI_ENV` | `int` for sandbox |
 | `ADMIN_PASSCODE` | any string you choose — gates `/admin` |
-| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` locally; the deployed HTTPS URL in production. **Must be HTTPS** for Nuvei's redirect/DMN URLs to be accepted — the app silently skips them over HTTP. |
-| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | From the Vercel-managed Redis store (Vercel dashboard → Storage, or `vercel env pull .env.local` once provisioned) |
 | `GEMINI_API_KEY` | Optional — for `scripts/generate-images.js`. Without it (or if the account has no image-generation quota), the app uses generated SVG placeholders automatically. |
+
+That's it — no database credentials of any kind.
 
 ### 2. Images (already generated)
 
@@ -88,33 +88,25 @@ placeholder files you want replaced, and rerun the script.
 npm run dev
 ```
 
-Listings and demo bookings seed themselves automatically on first request (`lib/ensure-seed.ts`)
-against whatever store is configured — real Redis if `UPSTASH_REDIS_REST_URL`/`TOKEN` are set,
-otherwise the in-memory fallback. You can also force a seed with `npm run seed`.
-
-Payment flows need real Nuvei sandbox credentials in `.env` to actually call `/openOrder`; the
-DMN webhook and redirect URLs only work once the app is deployed on a public HTTPS URL Nuvei can
-reach (see the HTTPS note above).
+Listings load straight from `data/listings.json`. Bookings seed themselves into
+`BookingsProvider` from `data/seed-bookings.json` on first load in a given browser tab — no
+setup step needed, and it works identically in `next dev` and once deployed. Real Nuvei sandbox
+credentials in `.env` are needed for the payment flows to actually call Nuvei.
 
 ## Deploying
 
 ```bash
-vercel link            # first time only
-vercel env pull .env.local   # after provisioning the Redis store, to get Upstash creds locally
+vercel link            # first time only, if not already linked
 vercel deploy --prod
 ```
 
-Set the same env vars (Nuvei creds, `ADMIN_PASSCODE`, `NEXT_PUBLIC_APP_URL` = the production
-URL) in the Vercel project's environment variables.
+Set the same env vars (Nuvei creds, `ADMIN_PASSCODE`) in the Vercel project's environment
+variables. No storage/database resource needs to be provisioned — this app has none.
 
 ### Nuvei-side configuration to check before a live demo
 
 - **Domain whitelisting**: confirm the deployed domain is allowed for Simply Connect / 3DS2
   redirect flows in the Nuvei Control Panel for this merchant site.
-- **DMN URL**: either rely on the per-request `urlDetails.notificationUrl` this app already
-  sends (built from `NEXT_PUBLIC_APP_URL`), or additionally register the same
-  `https://<your-domain>/api/webhooks/nuvei/dmn` URL in the Control Panel's integration
-  settings as a fallback.
 - **3DS2**: should run for real in sandbox once the merchant account is 3DS2-enabled — no
   mocking involved. Get current sandbox test card numbers from Nuvei's Testing Cards page.
 - **Apple Pay / Google Pay**: both are offered as selectable methods in the widget, but Apple
@@ -132,5 +124,12 @@ URL) in the Vercel project's environment variables.
   Nuvei's actual `checkout.js` bundle (downloaded and inspected — its own internal validator
   requires `renderTo`, `amount`, `currency`, `country`, `sessionToken`, `merchantId`,
   `merchantSiteId`), not just the docs example, after the docs search tool went down mid-build.
-  Still worth a smoke test after deploying since that inspection covered the config shape, not
-  every payment-method-specific edge case.
+- **No server-side persistence, by design.** Booking state lives per-browser-tab
+  (`sessionStorage`); it isn't shared across devices or visible to anyone else, and two people
+  opening the same booking URL in different browsers each see their own local copy. For this
+  demo's purpose — showing a room the payment flows working live against Nuvei sandbox — that's
+  the intended tradeoff. A production system would need a real backend for this.
+- Redirect-away payment methods (e.g. a full-page redirect to an external Bizum/PayPal page)
+  aren't guaranteed to resolve cleanly, since there's no server callback to catch the result if
+  the tab's in-memory state was lost in the process — the embedded widget flow (card, and any
+  method Nuvei renders inline rather than via full navigation) is what's been tested end-to-end.

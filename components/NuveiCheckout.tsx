@@ -2,10 +2,10 @@
 
 import { useEffect, useId, useState } from "react";
 import Script from "next/script";
-import type { OpenOrderMode } from "@/app/api/nuvei/open-order/route";
+import { amountForNuvei, convertFromEur } from "@/lib/pricing";
 import type { Currency } from "@/lib/types";
 
-interface NuveiResult {
+export interface NuveiResult {
   result?: "APPROVED" | "DECLINED" | "ERROR" | "PENDING" | string;
   errCode?: number;
   errorDescription?: string;
@@ -21,9 +21,10 @@ declare global {
 }
 
 interface NuveiCheckoutProps {
-  bookingId: string;
-  mode: OpenOrderMode;
+  amountEur: number;
   currency: Currency;
+  transactionType?: "Sale" | "Auth";
+  userTokenId: string;
   onOrderCreated?: (info: { amount: string; currency: string }) => void;
   onResult?: (result: NuveiResult) => void;
 }
@@ -31,14 +32,18 @@ interface NuveiCheckoutProps {
 // Renders Nuvei's Simply Connect 1.0 embedded checkout UI (window.checkout(), confirmed
 // against the real checkout.js bundle: it requires renderTo — a CSS selector matching
 // exactly one element — plus sessionToken/merchantId/merchantSiteId/country/currency/amount,
-// and takes an events.onResult callback). The flow is:
-//   1. Ask our backend to /openOrder for this booking + mode → sessionToken + amount/currency.
-//   2. Load Nuvei's checkout.js and call the global checkout() with that data.
-//   3. Nuvei's own UI collects card / Bizum / PayPal / wallet details and runs 3DS2.
-//   4. onResult gives fast client-side feedback, but the DMN webhook
-//      (/api/webhooks/nuvei/dmn) is the authoritative source of truth for booking status —
-//      the parent component polls booking status regardless of what onResult reports.
-export default function NuveiCheckout({ bookingId, mode, currency, onOrderCreated, onResult }: NuveiCheckoutProps) {
+// and takes an events.onResult callback). Stateless end to end: this component asks the
+// backend to /openOrder (a pure Nuvei proxy, no store), renders the widget, and reports the
+// result back to the caller via onResult — the caller (a BookingsProvider action) is what
+// actually records the outcome in client-side state.
+export default function NuveiCheckout({
+  amountEur,
+  currency,
+  transactionType = "Sale",
+  userTokenId,
+  onOrderCreated,
+  onResult,
+}: NuveiCheckoutProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // useId() (not Math.random()) keeps this stable across server/client render to avoid a
@@ -57,7 +62,12 @@ export default function NuveiCheckout({ bookingId, mode, currency, onOrderCreate
         const res = await fetch("/api/nuvei/open-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ bookingId, mode, currency }),
+          body: JSON.stringify({
+            amount: amountForNuvei(convertFromEur(amountEur, currency)),
+            currency,
+            transactionType,
+            userTokenId,
+          }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -111,7 +121,7 @@ export default function NuveiCheckout({ bookingId, mode, currency, onOrderCreate
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookingId, mode, currency]);
+  }, [amountEur, currency, transactionType, userTokenId]);
 
   return (
     <div className="rounded-2xl border border-sand-200 bg-white p-4">

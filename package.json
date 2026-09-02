@@ -7,11 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate-images": "node -r dotenv/config scripts/generate-images.js",
-    "seed": "tsx scripts/seed.ts"
+    "generate-images": "node -r dotenv/config scripts/generate-images.js"
   },
   "dependencies": {
-    "@upstash/redis": "^1.38.3",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "next": "16.3.4",
@@ -27,7 +25,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",
-    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }

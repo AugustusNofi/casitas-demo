@@ -1,22 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useBookings } from "@/app/providers";
 import { formatMoney } from "@/lib/pricing";
 import type { Booking } from "@/lib/types";
 
-async function postJson(url: string, body?: unknown) {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const data = await res.json();
-  return { ok: res.ok, data };
-}
-
 export default function AdminBookingActions({ booking }: { booking: Booking }) {
-  const router = useRouter();
+  const { runScheduledBalanceCharge, releaseHold, captureHold, refundBooking } = useBookings();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [damageAmount, setDamageAmount] = useState(String(booking.securityDepositAmount || 250));
@@ -24,20 +14,18 @@ export default function AdminBookingActions({ booking }: { booking: Booking }) {
     String(booking.transactionIds.sale ? booking.totalAmount : booking.depositAmount || 0)
   );
 
-  async function run(action: () => Promise<{ ok: boolean; data: unknown }>, successMsg: string) {
+  async function run(action: () => Promise<{ ok: boolean; error?: string }>, successMsg: string) {
     setBusy(true);
     setMessage(null);
-    const { ok, data } = await action();
-    const d = data as { error?: string };
+    const { ok, error } = await action();
     setMessage(
       ok
         ? successMsg
-        : d.error === "nuvei_not_configured"
+        : error === "nuvei_not_configured"
         ? "Las credenciales de Nuvei no están configuradas en el servidor."
-        : `Error: ${d.error || "desconocido"}`
+        : `Error: ${error || "desconocido"}`
     );
     setBusy(false);
-    if (ok) router.refresh();
   }
 
   const canRunScheduledCharge = booking.status === "deposit_paid" && booking.userPaymentOptionId;
@@ -57,7 +45,7 @@ export default function AdminBookingActions({ booking }: { booking: Booking }) {
           </p>
           <button
             disabled={busy}
-            onClick={() => run(() => postJson(`/api/admin/bookings/${booking.id}/run-scheduled-charge`), "Saldo cobrado correctamente.")}
+            onClick={() => run(() => runScheduledBalanceCharge(booking.id), "Saldo cobrado correctamente.")}
             className="mt-3 rounded-full bg-teal-600 px-4 py-2 text-xs font-bold text-white disabled:opacity-60"
           >
             Simular: ejecutar cobro programado
@@ -76,7 +64,7 @@ export default function AdminBookingActions({ booking }: { booking: Booking }) {
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <button
               disabled={busy}
-              onClick={() => run(() => postJson(`/api/admin/bookings/${booking.id}/release-hold`), "Fianza liberada.")}
+              onClick={() => run(() => releaseHold(booking.id), "Fianza liberada.")}
               className="rounded-full border border-teal-600 px-4 py-2 text-xs font-bold text-teal-700 disabled:opacity-60"
             >
               Liberar fianza (void)
@@ -91,7 +79,7 @@ export default function AdminBookingActions({ booking }: { booking: Booking }) {
               disabled={busy}
               onClick={() =>
                 run(
-                  () => postJson(`/api/admin/bookings/${booking.id}/claim-damages`, { amount: Number(damageAmount) }),
+                  () => captureHold(booking.id, Number(damageAmount)),
                   "Daños reclamados (captura parcial)."
                 )
               }
@@ -118,7 +106,7 @@ export default function AdminBookingActions({ booking }: { booking: Booking }) {
               disabled={busy}
               onClick={() =>
                 run(
-                  () => postJson(`/api/admin/bookings/${booking.id}/refund`, { amount: Number(refundAmount) }),
+                  () => refundBooking(booking.id, Number(refundAmount)),
                   "Reembolso procesado."
                 )
               }

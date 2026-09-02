@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import NuveiCheckout from "./NuveiCheckout";
+import NuveiCheckout, { type NuveiResult } from "./NuveiCheckout";
 import Timeline from "./Timeline";
+import { useBookings } from "@/app/providers";
 import { formatMoney } from "@/lib/pricing";
-import type { Booking, TimelineEvent } from "@/lib/types";
+import type { Booking } from "@/lib/types";
 
 const STATUS_LABEL: Record<Booking["status"], string> = {
   pending: "Pendiente de pago",
@@ -18,47 +19,52 @@ const STATUS_LABEL: Record<Booking["status"], string> = {
   cancelled: "Cancelada",
 };
 
-export default function BookingStatusPanel({
-  booking: initialBooking,
-  timeline: initialTimeline,
-}: {
-  booking: Booking;
-  timeline: TimelineEvent[];
-}) {
-  const [booking, setBooking] = useState(initialBooking);
-  const [timeline, setTimeline] = useState(initialTimeline);
+export default function BookingStatusPanel({ bookingId }: { bookingId: string }) {
+  const { getBooking, getTimeline, placeHold, cancelBooking } = useBookings();
+  const booking = getBooking(bookingId);
+  const timeline = getTimeline(bookingId);
   const [showHoldWidget, setShowHoldWidget] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [cancelResult, setCancelResult] = useState<string | null>(null);
 
-  async function refresh() {
-    const res = await fetch(`/api/bookings/${booking.id}`);
-    const data = await res.json();
-    if (data.booking) setBooking(data.booking);
-    if (data.timeline) setTimeline(data.timeline);
+  if (!booking) {
+    return (
+      <div className="rounded-2xl border border-sand-200 bg-white p-6 text-ink-700">
+        No se encuentra esta reserva en esta sesión del navegador.
+      </div>
+    );
   }
+  // Re-bind to a const so closures below keep the narrowed (non-undefined) type —
+  // TS doesn't propagate narrowing of `booking` into function declarations on its own.
+  const b = booking;
 
   async function handleCancel() {
     if (!confirm("¿Seguro que quieres cancelar esta reserva?")) return;
     setCancelling(true);
     setCancelResult(null);
-    try {
-      const res = await fetch(`/api/bookings/${booking.id}/cancel`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) {
-        setCancelResult(data.error === "nuvei_not_configured"
+    const res = await cancelBooking(bookingId);
+    if (!res.ok) {
+      setCancelResult(
+        res.error === "nuvei_not_configured"
           ? "Las credenciales de Nuvei no están configuradas en el servidor."
-          : "No se pudo procesar la cancelación.");
-      } else {
-        setCancelResult(
-          data.withinFreeWindow
-            ? `Reembolso completo procesado: ${formatMoney(data.refundAmount, booking.currency)}`
-            : `Reembolso parcial procesado (${booking.cancellationPolicyPct}%): ${formatMoney(data.refundAmount, booking.currency)}`
-        );
-        await refresh();
-      }
-    } finally {
-      setCancelling(false);
+          : "No se pudo procesar la cancelación."
+      );
+    } else if (res.refundAmount) {
+      setCancelResult(
+        res.withinFreeWindow
+          ? `Reembolso completo procesado: ${formatMoney(res.refundAmount, b.currency)}`
+          : `Reembolso parcial procesado (${b.cancellationPolicyPct}%): ${formatMoney(res.refundAmount, b.currency)}`
+      );
+    } else {
+      setCancelResult("Reserva cancelada.");
+    }
+    setCancelling(false);
+  }
+
+  function handleHoldResult(result: NuveiResult) {
+    if (result.result === "APPROVED") {
+      placeHold(bookingId, result);
+      setShowHoldWidget(false);
     }
   }
 
@@ -127,20 +133,11 @@ export default function BookingStatusPanel({
             ) : (
               <div className="mt-3">
                 <NuveiCheckout
-                  bookingId={booking.id}
-                  mode="security_deposit"
+                  amountEur={booking.securityDepositAmount || 250}
                   currency={booking.currency}
-                  onOrderCreated={() => {
-                    const poll = setInterval(async () => {
-                      const res = await fetch(`/api/bookings/${booking.id}`);
-                      const data = await res.json();
-                      if (data.booking?.status === "hold_active") {
-                        clearInterval(poll);
-                        await refresh();
-                        setShowHoldWidget(false);
-                      }
-                    }, 1800);
-                  }}
+                  transactionType="Auth"
+                  userTokenId={`${booking.id}-hold`}
+                  onResult={handleHoldResult}
                 />
               </div>
             )}
