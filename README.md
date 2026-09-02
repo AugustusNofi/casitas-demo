@@ -2,17 +2,18 @@
 
 Casitas is a fictional, joyful vacation-rental marketplace (apartments, villas, casas rurales
 across Spain and Europe) built to showcase five distinct real payment flows a travel/OTA
-platform needs, using **Nuvei's Web SDK (Simply Connect 1.0) in the sandbox environment**.
-UX/layout takes inspiration from Holidu.es (search-bar hero, popular-search pills, property
-card format) but no Holidu branding, copy, or photos are used — this is an original demo brand.
+platform needs, using **Nuvei's Web SDK in the sandbox environment** — custom-built, on-brand
+card fields rather than Nuvei's hosted Simply Connect widget. UX/layout takes inspiration from
+Holidu.es (search-bar hero, popular-search pills, property card format) but no Holidu branding,
+copy, or photos are used — this is an original demo brand.
 
 **This is a sandbox demo. No real money moves.**
 
 ## The five payment flows
 
-1. **Instant booking checkout** — full-stay payment via card (3DS2), Bizum, PayPal, Apple Pay /
-   Google Pay, via Nuvei Simply Connect. `/checkout/[id]` → confirmation with a real Nuvei
-   transaction ID.
+1. **Instant booking checkout** — full-stay card payment with real 3DS2, via Nuvei's Web SDK:
+   custom-styled card number / expiration / CVV fields (not a hosted widget). `/checkout/[id]` →
+   confirmation with a real Nuvei transaction ID.
 2. **Deposit + balance (card-on-file rebilling)** — pay 30% now, the card is tokenized
    (`userTokenId` + `userPaymentOptionId`), and the back office can trigger the remaining-balance
    charge on the stored token with no card re-entry (simulates the scheduled date arriving).
@@ -43,11 +44,13 @@ timeline per booking, and the action buttons for flows 2–4.
   and updates its own state with the real Nuvei transaction id / status.
   (Note: the brief referenced an `nuvei-server-nodejs` npm package — it doesn't exist on the
   registry, so this talks to Nuvei's REST v1 API directly instead.)
-- Nuvei Web SDK (Simply Connect 1.0: `/openOrder` → `sessionToken` → frontend `checkout()`)
-  renders the actual payment UI in `components/NuveiCheckout.tsx`. Completion is driven by the
-  widget's `events.onResult` callback (verified against Nuvei's actual `checkout.js` bundle),
-  which the calling component uses to update `BookingsProvider` state directly — there's no
-  DMN webhook or server-side polling, since there's no store for either to update.
+- **Nuvei Web SDK** (not Simply Connect): `/openOrder` → `sessionToken`, then the frontend
+  (`components/NuveiWebSdkCheckout.tsx`) calls `SafeCharge({...sessionToken}).fields()` to mount
+  three individually hosted, PCI-compliant iframe fields — card number, expiration, CVV — styled
+  to match the app, and `createPayment()` to submit. 3D Secure 2 runs automatically inside that
+  call (Nuvei manages the challenge iframe/popup itself). The callback result updates
+  `BookingsProvider` state directly — there's no DMN webhook or server-side polling, since
+  there's no store for either to update.
 
 ## Setup
 
@@ -105,14 +108,10 @@ variables. No storage/database resource needs to be provisioned — this app has
 
 ### Nuvei-side configuration to check before a live demo
 
-- **Domain whitelisting**: confirm the deployed domain is allowed for Simply Connect / 3DS2
-  redirect flows in the Nuvei Control Panel for this merchant site.
+- **Domain whitelisting**: confirm the deployed domain is allowed for Web SDK / 3DS2 redirect
+  flows in the Nuvei Control Panel for this merchant site.
 - **3DS2**: should run for real in sandbox once the merchant account is 3DS2-enabled — no
   mocking involved. Get current sandbox test card numbers from Nuvei's Testing Cards page.
-- **Apple Pay / Google Pay**: both are offered as selectable methods in the widget, but Apple
-  Pay needs Apple domain-association hosting + a merchant identity cert, and both wallets need
-  merchant IDs configured on Nuvei's side beyond basic sandbox card testing. Card, Bizum, and
-  PayPal are the flows guaranteed to complete end-to-end without extra setup.
 
 ## Known scope notes
 
@@ -120,16 +119,24 @@ variables. No storage/database resource needs to be provisioned — this app has
   cut to prioritize the five payment flows and back office within scope).
 - Multi-currency (flow 5) is a display/charge-currency demo using a static FX table, not real
   cross-account settlement — the checkout page explains this distinction on screen.
-- The `checkout()` JS call in `components/NuveiCheckout.tsx` was verified directly against
-  Nuvei's actual `checkout.js` bundle (downloaded and inspected — its own internal validator
-  requires `renderTo`, `amount`, `currency`, `country`, `sessionToken`, `merchantId`,
-  `merchantSiteId`), not just the docs example, after the docs search tool went down mid-build.
+- **Web SDK is card-only in this build.** Switching from Simply Connect (a hosted widget that
+  bundled card + Bizum + PayPal + wallets) to the raw Web SDK means each payment method needs
+  its own explicit integration — there's no single "show all methods" call. Card is fully wired
+  up (fields, 3DS2, tokenization). PayPal has a confirmed method code
+  (`apmgw_expresscheckout`) but needs its own redirect flow; Apple Pay / Google Pay have their
+  own separate SDK modules (`ppp_ApplePay` / `ppp_GooglePay`) with domain-verification and
+  merchant-ID setup on Nuvei's side; Bizum doesn't appear anywhere in the Web SDK bundle at all
+  in this inspection, so it may only be available via Simply Connect or the Cashier/Payment Page
+  product — not guessed at here rather than risk a silently-broken option.
+- `components/NuveiWebSdkCheckout.tsx`'s API calls (`SafeCharge()`, `.fields().create()`,
+  `.attach()`, `.createPayment()`) were confirmed by downloading and reading the actual
+  `safecharge.js` (Web SDK) bundle source after the docs search tool went down mid-build — the
+  same technique that caught two real bugs in the Simply Connect integration earlier. The field
+  styling options (`style.base/focus/invalid`) are the one part taken from general convention
+  rather than bundle-confirmed, since no live browser was available to visually verify — smoke
+  test the actual field rendering after deploying.
 - **No server-side persistence, by design.** Booking state lives per-browser-tab
   (`sessionStorage`); it isn't shared across devices or visible to anyone else, and two people
   opening the same booking URL in different browsers each see their own local copy. For this
   demo's purpose — showing a room the payment flows working live against Nuvei sandbox — that's
   the intended tradeoff. A production system would need a real backend for this.
-- Redirect-away payment methods (e.g. a full-page redirect to an external Bizum/PayPal page)
-  aren't guaranteed to resolve cleanly, since there's no server callback to catch the result if
-  the tab's in-memory state was lost in the process — the embedded widget flow (card, and any
-  method Nuvei renders inline rather than via full navigation) is what's been tested end-to-end.

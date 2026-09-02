@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import NuveiCheckout, { type NuveiResult } from "./NuveiCheckout";
+import NuveiWebSdkCheckout, { type WebSdkResult } from "./NuveiWebSdkCheckout";
 import { useCurrency } from "./CurrencyProvider";
 import { useBookings } from "@/app/providers";
 import { convertFromEur, formatMoney } from "@/lib/pricing";
@@ -48,7 +48,7 @@ export default function CheckoutFlow({ bookingId }: { bookingId: string }) {
   const balanceAmount = booking.totalAmount - depositAmount;
   const amountDueNow = payMode === "instant" ? booking.totalAmount : depositAmount;
 
-  function handleResult(result: NuveiResult) {
+  function handleResult(result: WebSdkResult) {
     if (result.result === "APPROVED") {
       setConfirming(true);
       if (payMode === "instant") {
@@ -117,8 +117,8 @@ export default function CheckoutFlow({ bookingId }: { bookingId: string }) {
         </div>
 
         <p className="mt-4 text-xs text-ink-700">
-          Métodos disponibles: tarjeta con 3DS2, Bizum, PayPal, Apple Pay y Google Pay (según
-          compatibilidad de tu dispositivo/navegador y configuración del comercio en Nuvei).
+          Pago con tarjeta a través del Web SDK de Nuvei: campos propios con estilo Casitas y
+          autenticación 3D Secure real, en vez de un widget alojado por Nuvei.
         </p>
       </div>
 
@@ -129,12 +129,14 @@ export default function CheckoutFlow({ bookingId }: { bookingId: string }) {
         {confirming ? (
           <p className="p-6 text-center text-sm text-ink-700">Confirmando tu reserva…</p>
         ) : (
-          <NuveiCheckout
+          <NuveiWebSdkCheckout
             key={payMode}
             amountEur={amountDueNow}
             currency={currency}
             transactionType="Sale"
             userTokenId={booking.id}
+            guestName={booking.guestName}
+            guestEmail={booking.guestEmail}
             onResult={handleResult}
           />
         )}

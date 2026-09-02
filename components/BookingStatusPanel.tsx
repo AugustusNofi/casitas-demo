@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import NuveiCheckout, { type NuveiResult } from "./NuveiCheckout";
+import NuveiWebSdkCheckout, { type WebSdkResult } from "./NuveiWebSdkCheckout";
 import Timeline from "./Timeline";
 import { useBookings } from "@/app/providers";
 import { formatMoney } from "@/lib/pricing";
@@ -61,7 +61,7 @@ export default function BookingStatusPanel({ bookingId }: { bookingId: string })
     setCancelling(false);
   }
 
-  function handleHoldResult(result: NuveiResult) {
+  function handleHoldResult(result: WebSdkResult) {
     if (result.result === "APPROVED") {
       placeHold(bookingId, result);
       setShowHoldWidget(false);
@@ -132,11 +132,13 @@ export default function BookingStatusPanel({ bookingId }: { bookingId: string })
               </button>
             ) : (
               <div className="mt-3">
-                <NuveiCheckout
+                <NuveiWebSdkCheckout
                   amountEur={booking.securityDepositAmount || 250}
                   currency={booking.currency}
                   transactionType="Auth"
                   userTokenId={`${booking.id}-hold`}
+                  guestName={booking.guestName}
+                  guestEmail={booking.guestEmail}
                   onResult={handleHoldResult}
                 />
               </div>

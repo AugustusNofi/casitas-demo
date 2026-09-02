@@ -8,7 +8,9 @@ first, privately, before presenting.
 1. Open the deployed URL in a fresh browser tab. Confirm the sandbox banner shows at the top,
    and that `/admin` already lists the seeded demo bookings (loaded from
    `data/seed-bookings.json` — no setup step needed).
-2. Go to a listing → Reservar → checkout. Confirm the Nuvei widget actually renders.
+2. Go to a listing → Reservar → checkout. Confirm the three Nuvei Web SDK card fields (number,
+   expiration, CVV) actually render and accept input — this is the one part of the Web SDK
+   integration that couldn't be visually verified without a live browser during the build.
 3. Run one real card payment through with a Nuvei sandbox test card and confirm it lands on the
    confirmation page and the booking's timeline shows the new event — this all happens
    client-side via the widget's `onResult` callback, so this also proves that's wired up.
@@ -29,11 +31,11 @@ first, privately, before presenting.
 - On a listing (pick one with free cancellation, e.g. a Costa Brava villa), fill dates/guests,
   enter a name + email, click **Reservar**.
 - On `/checkout/[id]`, leave "Pagar el total ahora" selected.
+- Point out the card fields are custom-built via Nuvei's Web SDK (not a hosted widget) — styled
+  to match the Casitas brand, each one a separately hosted, PCI-compliant iframe.
 - Complete payment with a Nuvei sandbox test card that triggers 3DS2 — narrate the challenge
-  step as it happens.
+  step as it happens (Nuvei's SDK manages it automatically).
 - Land on the confirmation page: point out the real Nuvei transaction ID.
-- Also mention the other selectable methods in the widget (Bizum, PayPal, Apple Pay, Google
-  Pay) without necessarily running all of them live.
 
 ## 3. Flow 2 — Deposit + balance / card-on-file rebilling (~2 min)
 
