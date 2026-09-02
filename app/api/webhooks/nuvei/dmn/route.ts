@@ -4,11 +4,23 @@ import { newId } from "@/lib/id";
 import type { Booking } from "@/lib/types";
 
 // Nuvei Direct Merchant Notification (DMN) — the authoritative server-to-server signal for
-// transaction status. We correlate a DMN back to a booking via `userTokenId`, which every
-// /openOrder call in this app sets to the booking id. Accepts GET or POST per Nuvei's docs
-// (some merchant configs send DMNs as GET query strings, others as POST bodies).
+// transaction status. Every /openOrder call in this app sets userTokenId to the booking id
+// AND encodes it in clientUniqueId as `${bookingId}--${mode}--${timestamp}` (see
+// app/api/nuvei/open-order/route.ts) — the latter is confirmed by Nuvei's docs to be echoed
+// back as merchant_unique_id/clientUniqueId in the DMN, whereas userTokenId isn't, so it's
+// tried first with userTokenId kept only as a defensive fallback. Accepts GET or POST per
+// Nuvei's docs (some merchant configs send DMNs as GET query strings, others as POST bodies).
+function extractBookingId(params: Record<string, string>): string | undefined {
+  const encoded = params.merchant_unique_id || params.clientUniqueId;
+  if (encoded) {
+    const match = encoded.match(/^(bk_[a-z0-9]+)--/i);
+    if (match) return match[1];
+  }
+  return params.userTokenId;
+}
+
 async function handleDmn(params: Record<string, string>) {
-  const bookingId = params.userTokenId;
+  const bookingId = extractBookingId(params);
   const status = params.Status || params.status;
   const pppStatus = params.ppp_status;
   const transactionId = params.TransactionId || params.transactionId;
@@ -16,7 +28,7 @@ async function handleDmn(params: Record<string, string>) {
   const currency = params.currency;
 
   if (!bookingId) {
-    return { ok: false, reason: "missing_userTokenId" };
+    return { ok: false, reason: "could_not_correlate_booking" };
   }
 
   const booking = await getBooking(bookingId);

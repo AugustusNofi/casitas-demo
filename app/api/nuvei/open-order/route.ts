@@ -45,11 +45,16 @@ export async function POST(req: Request) {
   // is only observable via the deployed HTTPS URL. The embedded widget itself still renders.
   const isHttps = base.startsWith("https://");
 
+  // Encodes the booking id in a form the DMN handler can parse back out of
+  // merchant_unique_id/clientUniqueId, since userTokenId isn't confirmed to be echoed there.
+  const clientUniqueId = `${booking.id}--${mode}--${Date.now()}`;
+
   const result = await openOrder({
     amount,
     currency,
     userTokenId: booking.id,
     transactionType,
+    clientUniqueId,
     ...(isHttps
       ? {
           notificationUrl: getDmnNotificationUrl(),

@@ -72,6 +72,10 @@ export interface OpenOrderParams {
   successUrl?: string;
   failureUrl?: string;
   pendingUrl?: string;
+  // Nuvei's DMN payload isn't confirmed to echo back userTokenId, but it does echo
+  // merchant_unique_id — so callers should pass a value they can parse a booking id back
+  // out of. Falls back to a random id if omitted.
+  clientUniqueId?: string;
 }
 
 export async function openOrder(params: OpenOrderParams) {
@@ -79,7 +83,7 @@ export async function openOrder(params: OpenOrderParams) {
   if (!cfg) throw new Error("Nuvei not configured");
 
   const clientRequestId = uniqueId("req");
-  const clientUniqueId = uniqueId("ord");
+  const clientUniqueId = params.clientUniqueId || uniqueId("ord");
   const ts = timeStamp();
   const raw =
     cfg.merchantId + cfg.merchantSiteId + clientRequestId + params.amount + params.currency + ts + cfg.secretKey;
