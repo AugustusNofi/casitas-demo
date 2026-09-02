@@ -17,8 +17,8 @@
       "kitchen"
     ],
     "images": [
-      "/images/costa-brava-apartment-interior.jpg",
-      "/images/hero-banner.jpg"
+      "/images/costa-brava-apartment-interior.png",
+      "/images/hero-banner.png"
     ],
     "description": "Luminoso apartamento a dos minutos a pie de la cala, con balcón privado y vistas al Mediterráneo. Ideal para desconectar en pareja o en familia.",
     "hostName": "Marta"
@@ -42,8 +42,8 @@
       "parking"
     ],
     "images": [
-      "/images/costa-brava-villa-pool.jpg",
-      "/images/hero-banner.jpg"
+      "/images/costa-brava-villa-pool.png",
+      "/images/hero-banner.png"
     ],
     "description": "Villa exclusiva con piscina infinita, terrazas escalonadas y acceso directo a una cala rocosa. Perfecta para grupos que buscan intimidad y vistas de postal.",
     "hostName": "Jordi"
@@ -67,8 +67,8 @@
       "parking"
     ],
     "images": [
-      "/images/andalucia-casa-rural-courtyard.jpg",
-      "/images/andalucia-white-village-house.jpg"
+      "/images/andalucia-casa-rural-courtyard.png",
+      "/images/andalucia-white-village-house.png"
     ],
     "description": "Casa tradicional restaurada con un patio interior lleno de geranios y una fuente central. A pasos de la plaza del pueblo blanco.",
     "hostName": "Rocío"
@@ -91,8 +91,8 @@
       "parking"
     ],
     "images": [
-      "/images/andalucia-white-village-house.jpg",
-      "/images/andalucia-casa-rural-courtyard.jpg"
+      "/images/andalucia-white-village-house.png",
+      "/images/andalucia-casa-rural-courtyard.png"
     ],
     "description": "Casa encalada en una calle empedrada de un pueblo blanco, con macetas de flores en cada balcón y un ambiente auténticamente andaluz.",
     "hostName": "Rocío"
@@ -116,8 +116,8 @@
       "parking"
     ],
     "images": [
-      "/images/algarve-villa-infinity-pool.jpg",
-      "/images/algarve-apartment-bright-interior.jpg"
+      "/images/algarve-villa-infinity-pool.png",
+      "/images/algarve-apartment-bright-interior.png"
     ],
     "description": "Arquitectura minimalista frente a los acantilados del Algarve, con una piscina infinita que parece fundirse con el océano.",
     "hostName": "Miguel"
@@ -140,8 +140,8 @@
       "kitchen"
     ],
     "images": [
-      "/images/algarve-apartment-bright-interior.jpg",
-      "/images/algarve-villa-infinity-pool.jpg"
+      "/images/algarve-apartment-bright-interior.png",
+      "/images/algarve-villa-infinity-pool.png"
     ],
     "description": "Apartamento acogedor con maderas claras y textiles artesanales, a un corto paseo de las mejores playas del Algarve.",
     "hostName": "Miguel"
@@ -165,8 +165,8 @@
       "parking"
     ],
     "images": [
-      "/images/sardinia-villa-pergola.jpg",
-      "/images/sardinia-seaview-terrace.jpg"
+      "/images/sardinia-villa-pergola.png",
+      "/images/sardinia-seaview-terrace.png"
     ],
     "description": "Villa de piedra rodeada de pinos y viñedos, con una pérgola cubierta de vid perfecta para cenas al aire libre.",
     "hostName": "Elena"
@@ -189,8 +189,8 @@
       "kitchen"
     ],
     "images": [
-      "/images/sardinia-seaview-terrace.jpg",
-      "/images/sardinia-villa-pergola.jpg"
+      "/images/sardinia-seaview-terrace.png",
+      "/images/sardinia-villa-pergola.png"
     ],
     "description": "Terraza privada sobre los acantilados de granito, con vistas al mar turquesa de Cerdeña desde el café de la mañana.",
     "hostName": "Elena"
@@ -213,8 +213,8 @@
       "kitchen"
     ],
     "images": [
-      "/images/greek-island-cycladic-house.jpg",
-      "/images/greek-island-poolside-sea-view.jpg"
+      "/images/greek-island-cycladic-house.png",
+      "/images/greek-island-poolside-sea-view.png"
     ],
     "description": "Casa cúbica encalada con puertas y postigos azul cielo, escalones de piedra y el Egeo asomando al fondo de la calle.",
     "hostName": "Dimitra"
@@ -238,8 +238,8 @@
       "parking"
     ],
     "images": [
-      "/images/greek-island-poolside-sea-view.jpg",
-      "/images/greek-island-cycladic-house.jpg"
+      "/images/greek-island-poolside-sea-view.png",
+      "/images/greek-island-cycladic-house.png"
     ],
     "description": "Piscina privada en una terraza encalada con vistas a las islas vecinas. El lugar perfecto para ver el atardecer del Egeo.",
     "hostName": "Dimitra"

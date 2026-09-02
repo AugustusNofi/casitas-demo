@@ -2,11 +2,11 @@ import Link from "next/link";
 import { DESTINATIONS } from "@/lib/fixtures";
 
 const DESTINATION_IMAGE: Record<string, string> = {
-  "costa-brava": "/images/costa-brava-villa-pool.jpg",
-  andalucia: "/images/andalucia-white-village-house.jpg",
-  algarve: "/images/algarve-villa-infinity-pool.jpg",
-  sardinia: "/images/sardinia-villa-pergola.jpg",
-  "greek-islands": "/images/greek-island-cycladic-house.jpg",
+  "costa-brava": "/images/costa-brava-villa-pool.png",
+  andalucia: "/images/andalucia-white-village-house.png",
+  algarve: "/images/algarve-villa-infinity-pool.png",
+  sardinia: "/images/sardinia-villa-pergola.png",
+  "greek-islands": "/images/greek-island-cycladic-house.png",
 };
 
 export default function DestinationGrid() {

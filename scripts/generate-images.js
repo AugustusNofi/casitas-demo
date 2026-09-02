@@ -17,8 +17,8 @@ function sleep(ms) {
 
 // A duotone coral/teal gradient with a simple rounded-shape overlay, so the demo still looks
 // intentional even with no Gemini key configured. Written as SVG regardless of the manifest's
-// nominal .jpg/.png extension; the app renders images with plain <img> tags (no Next.js Image
-// optimizer), so an SVG payload under a .jpg name still displays correctly in the browser.
+// nominal .png extension; the app renders images with plain <img> tags (no Next.js Image
+// optimizer), so an SVG payload under a .png name still displays correctly in the browser.
 function placeholderSvg(file, aspectRatio) {
   const [w, h] = aspectRatio === "16:9" ? [1600, 900] : aspectRatio === "1:1" ? [512, 512] : [1200, 900];
   const isIcon = aspectRatio === "1:1";

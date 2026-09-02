@@ -51,7 +51,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           <div className="flex items-center gap-3 border-b border-sand-200 pb-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/host-portrait.jpg"
+              src="/images/host-portrait.png"
               alt={listing.hostName}
               className="h-14 w-14 rounded-full object-cover"
             />
