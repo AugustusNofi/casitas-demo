@@ -116,6 +116,11 @@ export async function openOrder(params: OpenOrderParams) {
   };
 }
 
+// settle/void/refund checksums are keyed on `clientUniqueId` (not `clientRequestId` — unlike
+// /openOrder). Verified live against the sandbox: a dummy relatedTransactionId with this
+// formula returns errCode 1082 "Invalid value of relatedTransactionId" (a domain error), not
+// 1001 "Invalid checksum" — confirming the field order below is correct.
+
 export async function settleTransaction(params: {
   relatedTransactionId: string;
   amount: string;
@@ -124,12 +129,12 @@ export async function settleTransaction(params: {
   const cfg = getEnv();
   if (!cfg) throw new Error("Nuvei not configured");
 
-  const clientRequestId = uniqueId("settle");
+  const clientUniqueId = uniqueId("settle");
   const ts = timeStamp();
   const raw =
     cfg.merchantId +
     cfg.merchantSiteId +
-    clientRequestId +
+    clientUniqueId +
     params.amount +
     params.currency +
     params.relatedTransactionId +
@@ -140,8 +145,7 @@ export async function settleTransaction(params: {
   const { json } = await post("/settleTransaction.do", {
     merchantId: cfg.merchantId,
     merchantSiteId: cfg.merchantSiteId,
-    clientRequestId,
-    clientUniqueId: clientRequestId,
+    clientUniqueId,
     amount: params.amount,
     currency: params.currency,
     relatedTransactionId: params.relatedTransactionId,
@@ -155,17 +159,16 @@ export async function voidTransaction(params: { relatedTransactionId: string }) 
   const cfg = getEnv();
   if (!cfg) throw new Error("Nuvei not configured");
 
-  const clientRequestId = uniqueId("void");
+  const clientUniqueId = uniqueId("void");
   const ts = timeStamp();
   const raw =
-    cfg.merchantId + cfg.merchantSiteId + clientRequestId + params.relatedTransactionId + ts + cfg.secretKey;
+    cfg.merchantId + cfg.merchantSiteId + clientUniqueId + params.relatedTransactionId + ts + cfg.secretKey;
   const checksum = sha256(raw);
 
   const { json } = await post("/voidTransaction.do", {
     merchantId: cfg.merchantId,
     merchantSiteId: cfg.merchantSiteId,
-    clientRequestId,
-    clientUniqueId: clientRequestId,
+    clientUniqueId,
     relatedTransactionId: params.relatedTransactionId,
     timeStamp: ts,
     checksum,
@@ -181,12 +184,12 @@ export async function refundTransaction(params: {
   const cfg = getEnv();
   if (!cfg) throw new Error("Nuvei not configured");
 
-  const clientRequestId = uniqueId("refund");
+  const clientUniqueId = uniqueId("refund");
   const ts = timeStamp();
   const raw =
     cfg.merchantId +
     cfg.merchantSiteId +
-    clientRequestId +
+    clientUniqueId +
     params.amount +
     params.currency +
     params.relatedTransactionId +
@@ -197,8 +200,7 @@ export async function refundTransaction(params: {
   const { json } = await post("/refundTransaction.do", {
     merchantId: cfg.merchantId,
     merchantSiteId: cfg.merchantSiteId,
-    clientRequestId,
-    clientUniqueId: clientRequestId,
+    clientUniqueId,
     amount: params.amount,
     currency: params.currency,
     relatedTransactionId: params.relatedTransactionId,
