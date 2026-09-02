@@ -23,7 +23,7 @@ export default function HomePage() {
           <h1 className="font-display max-w-2xl text-3xl font-extrabold text-white drop-shadow sm:text-5xl">
             Encuentra tu próxima casita de vacaciones
           </h1>
-          <p className="mt-3 max-w-lg text-sm text-white/90 sm:text-base">
+          <p className="mt-3 max-w-lg text-sm font-medium text-white drop-shadow-md sm:text-base">
             Apartamentos, villas y casas rurales en España y Europa, con pagos flexibles y
             seguros.
           </p>

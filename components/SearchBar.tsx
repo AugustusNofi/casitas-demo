@@ -24,7 +24,7 @@ export default function SearchBar({ compact = false }: { compact?: boolean }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className={`grid w-full grid-cols-1 items-stretch gap-2 rounded-2xl bg-white p-2 shadow-xl sm:grid-cols-[1.3fr_1fr_1fr_0.9fr_auto] ${
+      className={`mx-auto grid w-full grid-cols-1 items-stretch gap-2 rounded-2xl bg-white p-2 shadow-xl sm:grid-cols-[1.3fr_1fr_1fr_0.9fr_auto] ${
         compact ? "max-w-4xl" : "max-w-3xl"
       }`}
     >
