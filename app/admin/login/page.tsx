@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -13,21 +11,28 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const res = await fetch("/api/admin/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ passcode }),
-    });
-    if (res.ok) {
-      router.push("/admin");
-      router.refresh();
-    } else {
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode }),
+      });
+      if (res.ok) {
+        // Full browser navigation (not router.push) so the freshly-set cookie is guaranteed
+        // to be sent on the very next request — a client-side soft nav right after setting an
+        // httpOnly cookie can race with Next's middleware and leave the button stuck loading.
+        window.location.href = "/admin";
+        return;
+      }
       const data = await res.json();
       setError(
         data.error === "not_configured"
           ? "ADMIN_PASSCODE no está configurado en el servidor."
           : "Código incorrecto."
       );
+    } catch {
+      setError("No se pudo conectar con el servidor. Inténtalo de nuevo.");
+    } finally {
       setLoading(false);
     }
   }

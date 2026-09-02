@@ -1,15 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function AdminNav() {
-  const router = useRouter();
-
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
-    router.push("/admin/login");
-    router.refresh();
+    // Full browser navigation, not router.push — same reasoning as the login page: avoids a
+    // client-side soft nav racing the cookie change against Next's middleware.
+    window.location.href = "/admin/login";
   }
 
   return (
