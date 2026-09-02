@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NuveiWebSdkCheckout, { type WebSdkResult } from "./NuveiWebSdkCheckout";
-import TestCardsPanel from "./TestCardsPanel";
 import { useCurrency } from "./CurrencyProvider";
 import { useBookings } from "@/app/providers";
 import { convertFromEur, formatMoney } from "@/lib/pricing";
@@ -126,9 +125,6 @@ export default function CheckoutFlow({ bookingId }: { bookingId: string }) {
       <div>
         <div className="mb-3 rounded-xl bg-ink-900 px-4 py-2 text-center text-sm font-semibold text-white">
           A pagar ahora: {formatMoney(convertFromEur(amountDueNow, currency), currency)}
-        </div>
-        <div className="mb-3">
-          <TestCardsPanel />
         </div>
         {confirming ? (
           <p className="p-6 text-center text-sm text-ink-700">Confirmando tu reserva…</p>

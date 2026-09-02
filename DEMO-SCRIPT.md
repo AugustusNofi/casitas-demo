@@ -9,11 +9,13 @@ first, privately, before presenting.
    and that `/admin` already lists the seeded demo bookings (loaded from
    `data/seed-bookings.json` — no setup step needed).
 2. Go to a listing → Reservar → checkout. Confirm the three Nuvei Web SDK card fields (number,
-   expiration, CVV) actually render and accept input — this is the one part of the Web SDK
-   integration that couldn't be visually verified without a live browser during the build.
-3. Run one real card payment through with a Nuvei sandbox test card and confirm it lands on the
-   confirmation page and the booking's timeline shows the new event — this all happens
-   client-side via the widget's `onResult` callback, so this also proves that's wired up.
+   expiration, CVV) actually render and accept input, and click one of the 3DS2 scenario buttons
+   to confirm it actually fills those fields (`setValue()`) rather than just copying to the
+   clipboard — none of this was visually verified without a live browser during the build.
+3. Run the Frictionless scenario through end to end and confirm it lands on the confirmation
+   page and the booking's timeline shows the new event — this all happens client-side via the
+   widget's `onResult` callback, so this also proves that's wired up. Then try Challenge and
+   confirm the 3DS popup/iframe actually appears.
 4. Log into `/admin` with your `ADMIN_PASSCODE` and confirm that same booking shows up. Note
    this state is per-browser-tab (`sessionStorage`) — refreshing keeps it, but a different
    browser/device won't see it. Do the whole demo in one tab.
@@ -80,17 +82,22 @@ first, privately, before presenting.
   no database of its own, it's all state in this browser tab kept in sync with what Nuvei
   actually did.
 
-## Test cards / methods
+## Test cards / 3DS2 scenarios
 
 Every checkout screen (instant/deposit payment and the check-in security-deposit hold) shows a
-"🧪 Tarjetas de sandbox de Nuvei" panel right above the card fields — click any number/expiry/CVV
-to copy it. Two cards are built in (both taken verbatim from Nuvei's own documentation examples):
+"🧪 Escenarios de prueba 3DS2 (sandbox Nuvei)" picker right above the card fields, with three
+one-click buttons. Clicking one fills the cardholder name field and the three secure card fields
+(number/expiry/CVV) automatically via the Web SDK's `setValue()`, and copies the card number to
+the clipboard as a fallback. Nuvei's sandbox reads the **cardholder name**, not just the card
+number, to decide which 3DS behavior to simulate — all three combinations below are taken
+verbatim from Nuvei's Testing Cards documentation
+(docs.nuvei.com/documentation/integration/testing/testing-cards/):
 
-| Brand | Number | Expiry | CVV |
-|---|---|---|---|
-| Visa | 4000027891380961 | 12/30 | 217 |
-| Mastercard | 5101081046006034 | 12/26 | 123 |
+| Scenario | Brand | Card number | Cardholder name | Expiry | CVV |
+|---|---|---|---|---|---|
+| Normal (sin 3DS) | Visa | 4000027891380961 | Jane Smith | 12/30 | 217 |
+| 3DS2 — Frictionless | Visa | 4000020951595032 | FL-BRW1 | 12/30 | 217 |
+| 3DS2 — Challenge | Mastercard | 2221008123677736 | CL-BRW2 | 12/26 | 123 |
 
-For a guaranteed 3DS2 challenge, a guaranteed decline, or other specific scenarios, pull the
-current numbers from the Testing Cards page in your Nuvei account — those weren't verified here
-and can change.
+For a guaranteed decline or other scenarios beyond these three, pull the current numbers from
+the same Testing Cards page in your Nuvei account.
