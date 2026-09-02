@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import NuveiWebSdkCheckout, { type WebSdkResult } from "./NuveiWebSdkCheckout";
+import TestCardsPanel from "./TestCardsPanel";
 import Timeline from "./Timeline";
 import { useBookings } from "@/app/providers";
 import { formatMoney } from "@/lib/pricing";
@@ -131,7 +132,8 @@ export default function BookingStatusPanel({ bookingId }: { bookingId: string })
                 Simular check-in
               </button>
             ) : (
-              <div className="mt-3">
+              <div className="mt-3 space-y-3">
+                <TestCardsPanel />
                 <NuveiWebSdkCheckout
                   amountEur={booking.securityDepositAmount || 250}
                   currency={booking.currency}

@@ -82,6 +82,15 @@ first, privately, before presenting.
 
 ## Test cards / methods
 
-Pull current sandbox 3DS2 test card numbers (frictionless, challenge, decline scenarios) from
-Nuvei's Testing Cards documentation page before the demo — these aren't hardcoded here since
-they can change and are best confirmed fresh against your sandbox account.
+Every checkout screen (instant/deposit payment and the check-in security-deposit hold) shows a
+"🧪 Tarjetas de sandbox de Nuvei" panel right above the card fields — click any number/expiry/CVV
+to copy it. Two cards are built in (both taken verbatim from Nuvei's own documentation examples):
+
+| Brand | Number | Expiry | CVV |
+|---|---|---|---|
+| Visa | 4000027891380961 | 12/30 | 217 |
+| Mastercard | 5101081046006034 | 12/26 | 123 |
+
+For a guaranteed 3DS2 challenge, a guaranteed decline, or other specific scenarios, pull the
+current numbers from the Testing Cards page in your Nuvei account — those weren't verified here
+and can change.
