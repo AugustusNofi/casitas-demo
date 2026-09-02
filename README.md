@@ -128,8 +128,9 @@ URL) in the Vercel project's environment variables.
   cut to prioritize the five payment flows and back office within scope).
 - Multi-currency (flow 5) is a display/charge-currency demo using a static FX table, not real
   cross-account settlement — the checkout page explains this distinction on screen.
-- The exact `checkout()` JS call in `components/NuveiCheckout.tsx` was built from Nuvei's
-  documented Simply Connect 1.0 example; the docs search tool went down mid-build before every
-  config field could be triple-checked. **Smoke-test this first** after deploying — if the
-  widget doesn't render, check the browser console and compare against
-  `docs.nuvei.com` → Simply Connect → Quick Start.
+- The `checkout()` JS call in `components/NuveiCheckout.tsx` was verified directly against
+  Nuvei's actual `checkout.js` bundle (downloaded and inspected — its own internal validator
+  requires `renderTo`, `amount`, `currency`, `country`, `sessionToken`, `merchantId`,
+  `merchantSiteId`), not just the docs example, after the docs search tool went down mid-build.
+  Still worth a smoke test after deploying since that inspection covered the config shape, not
+  every payment-method-specific edge case.
