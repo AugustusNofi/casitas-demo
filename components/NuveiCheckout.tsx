@@ -1,9 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import Script from "next/script";
 import type { OpenOrderMode } from "@/app/api/nuvei/open-order/route";
 import type { Currency } from "@/lib/types";
+
+interface NuveiResult {
+  result?: "APPROVED" | "DECLINED" | "ERROR" | "PENDING" | string;
+  errCode?: number;
+  errorDescription?: string;
+  transactionId?: string;
+  userPaymentOptionId?: string;
+  last4Digits?: string;
+}
 
 declare global {
   interface Window {
@@ -16,19 +25,27 @@ interface NuveiCheckoutProps {
   mode: OpenOrderMode;
   currency: Currency;
   onOrderCreated?: (info: { amount: string; currency: string }) => void;
+  onResult?: (result: NuveiResult) => void;
 }
 
-// Renders Nuvei's Simply Connect 1.0 embedded checkout UI. The flow is:
-//   1. Ask our backend to /openOrder for this booking + mode → sessionToken.
-//   2. Load Nuvei's checkout.js and call the global checkout() with that token.
+// Renders Nuvei's Simply Connect 1.0 embedded checkout UI (window.checkout(), confirmed
+// against the real checkout.js bundle: it requires renderTo — a CSS selector matching
+// exactly one element — plus sessionToken/merchantId/merchantSiteId/country/currency/amount,
+// and takes an events.onResult callback). The flow is:
+//   1. Ask our backend to /openOrder for this booking + mode → sessionToken + amount/currency.
+//   2. Load Nuvei's checkout.js and call the global checkout() with that data.
 //   3. Nuvei's own UI collects card / Bizum / PayPal / wallet details and runs 3DS2.
-//   4. The authoritative result arrives server-side via DMN (see /api/webhooks/nuvei/dmn);
-//      this component just re-fetches booking status once the widget reports completion.
-export default function NuveiCheckout({ bookingId, mode, currency, onOrderCreated }: NuveiCheckoutProps) {
+//   4. onResult gives fast client-side feedback, but the DMN webhook
+//      (/api/webhooks/nuvei/dmn) is the authoritative source of truth for booking status —
+//      the parent component polls booking status regardless of what onResult reports.
+export default function NuveiCheckout({ bookingId, mode, currency, onOrderCreated, onResult }: NuveiCheckoutProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const scriptLoaded = useRef(false);
-  const containerId = "nuvei-checkout-container";
+  // useId() (not Math.random()) keeps this stable across server/client render to avoid a
+  // hydration mismatch; colons are stripped since Nuvei's SDK uses this as a CSS selector
+  // (document.querySelectorAll), where React's default useId() format isn't valid syntax.
+  const rawId = useId();
+  const containerId = `nuvei-checkout-${rawId.replace(/:/g, "")}`;
 
   useEffect(() => {
     let cancelled = false;
@@ -57,7 +74,15 @@ export default function NuveiCheckout({ bookingId, mode, currency, onOrderCreate
             merchantId: data.merchantId,
             merchantSiteId: data.merchantSiteId,
             env: data.env,
-            containerId,
+            amount: data.amount,
+            currency: data.currency,
+            country: data.country,
+            renderTo: `#${containerId}`,
+            events: {
+              onResult: (result: NuveiResult) => {
+                onResult?.(result);
+              },
+            },
           });
           setStatus("ready");
         }
@@ -90,13 +115,7 @@ export default function NuveiCheckout({ bookingId, mode, currency, onOrderCreate
 
   return (
     <div className="rounded-2xl border border-sand-200 bg-white p-4">
-      <Script
-        src="https://cdn.safecharge.com/safecharge_resources/v1/checkout/checkout.js"
-        strategy="afterInteractive"
-        onLoad={() => {
-          scriptLoaded.current = true;
-        }}
-      />
+      <Script src="https://cdn.safecharge.com/safecharge_resources/v1/checkout/checkout.js" strategy="afterInteractive" />
       {status === "loading" && (
         <p className="p-6 text-center text-sm text-ink-700">Preparando el pago seguro…</p>
       )}

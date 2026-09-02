@@ -83,6 +83,8 @@ export async function POST(req: Request) {
     env: process.env.NUVEI_ENV || "int",
     amount,
     currency,
+    // Spain-first per the brief; the checkout() widget requires a country to initialize.
+    country: "ES",
     transactionType,
     userTokenId: booking.id,
   });

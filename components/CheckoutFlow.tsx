@@ -13,6 +13,7 @@ export default function CheckoutFlow({ booking }: { booking: Booking }) {
   const { currency, setCurrency } = useCurrency();
   const [payMode, setPayMode] = useState<"instant" | "deposit">("instant");
   const [polling, setPolling] = useState(false);
+  const [resultMessage, setResultMessage] = useState<string | null>(null);
 
   // Checkout uses the currency the booking was created with, so the price shown here
   // matches what's actually sent to Nuvei — switching the nav currency mid-checkout
@@ -120,12 +121,26 @@ export default function CheckoutFlow({ booking }: { booking: Booking }) {
           bookingId={booking.id}
           mode={mode}
           currency={currency}
-          onOrderCreated={() => setPolling(true)}
+          onOrderCreated={() => {
+            setPolling(true);
+            setResultMessage(null);
+          }}
+          onResult={(result) => {
+            if (result.result === "DECLINED" || result.result === "ERROR") {
+              setPolling(false);
+              setResultMessage(
+                result.errorDescription || "El pago no se ha podido completar. Inténtalo de nuevo."
+              );
+            }
+          }}
         />
         {polling && (
           <p className="mt-2 text-center text-xs text-ink-700">
             Esperando confirmación de Nuvei… esto se actualiza automáticamente.
           </p>
+        )}
+        {resultMessage && (
+          <p className="mt-2 text-center text-xs font-medium text-coral-700">{resultMessage}</p>
         )}
       </div>
     </div>
