@@ -4,12 +4,12 @@ import type { Listing } from "@/lib/types";
 import BookingWidget from "@/components/BookingWidget";
 
 const AMENITY_LABEL: Record<string, { label: string; icon: string }> = {
-  pool: { label: "Piscina privada", icon: "/images/icon-pool.jpeg" },
-  "pet-friendly": { label: "Admite mascotas", icon: "/images/icon-pet-friendly.jpeg" },
-  "sea-view": { label: "Vistas al mar", icon: "/images/icon-sea-view.jpeg" },
-  wifi: { label: "Wifi de alta velocidad", icon: "/images/icon-wifi.jpeg" },
-  kitchen: { label: "Cocina equipada", icon: "/images/icon-kitchen.jpeg" },
-  parking: { label: "Parking privado", icon: "/images/icon-parking.jpeg" },
+  pool: { label: "Piscina privada", icon: "/images/icon-pool.svg" },
+  "pet-friendly": { label: "Admite mascotas", icon: "/images/icon-pet-friendly.svg" },
+  "sea-view": { label: "Vistas al mar", icon: "/images/icon-sea-view.svg" },
+  wifi: { label: "Wifi de alta velocidad", icon: "/images/icon-wifi.svg" },
+  kitchen: { label: "Cocina equipada", icon: "/images/icon-kitchen.svg" },
+  parking: { label: "Parking privado", icon: "/images/icon-parking.svg" },
 };
 
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {

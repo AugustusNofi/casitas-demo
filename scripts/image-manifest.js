@@ -55,30 +55,9 @@ const IMAGES = [
     "Aegean Sea and distant islands, blue-cushioned daybed, terracotta " +
     "pots with herbs, bright Greek midday light, " + STYLE_SUFFIX },
 
-  { file: "icon-pool.jpeg", aspectRatio: "1:1", prompt:
-    "Flat minimalist line-icon illustration of a swimming pool with a " +
-    "diving board, simple geometric shapes, two-color palette (coral and " +
-    "teal), transparent background, friendly rounded style, no text" },
-  { file: "icon-pet-friendly.jpeg", aspectRatio: "1:1", prompt:
-    "Flat minimalist line-icon illustration of a happy dog paw print inside " +
-    "a house outline, simple geometric shapes, coral and teal two-color " +
-    "palette, transparent background, friendly rounded style, no text" },
-  { file: "icon-sea-view.jpeg", aspectRatio: "1:1", prompt:
-    "Flat minimalist line-icon illustration of waves and a sun over the " +
-    "horizon framed by a window shape, coral and teal two-color palette, " +
-    "transparent background, friendly rounded style, no text" },
-  { file: "icon-wifi.jpeg", aspectRatio: "1:1", prompt:
-    "Flat minimalist line-icon illustration of a wifi signal symbol inside " +
-    "a rounded square badge, coral and teal two-color palette, transparent " +
-    "background, friendly rounded style, no text" },
-  { file: "icon-kitchen.jpeg", aspectRatio: "1:1", prompt:
-    "Flat minimalist line-icon illustration of a chef's hat and cooking pot, " +
-    "simple geometric shapes, coral and teal two-color palette, transparent " +
-    "background, friendly rounded style, no text" },
-  { file: "icon-parking.jpeg", aspectRatio: "1:1", prompt:
-    "Flat minimalist line-icon illustration of a letter P parking symbol " +
-    "inside a rounded square badge, coral and teal two-color palette, " +
-    "transparent background, friendly rounded style, no text" },
+  // The 6 amenity icons (pool, pet-friendly, sea-view, wifi, kitchen, parking) were dropped
+  // from this manifest: Nano Banana's UI can't produce them the way this pipeline needs, so
+  // they're now hand-authored SVGs at public/images/icon-*.svg instead of generated here.
 
   { file: "host-portrait.jpeg", aspectRatio: "4:3", prompt:
     "A friendly-looking fictional host in their 40s standing in the sunlit " +
