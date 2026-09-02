@@ -1,26 +1,72 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fffaf5;
+  --foreground: #2a2420;
+
+  --color-coral-50: #fff1ec;
+  --color-coral-100: #ffe0d4;
+  --color-coral-300: #ffab8f;
+  --color-coral-500: #ff6b4a;
+  --color-coral-600: #f0532f;
+  --color-coral-700: #cf3f20;
+
+  --color-teal-50: #eafbf9;
+  --color-teal-100: #cdf2ee;
+  --color-teal-300: #6cc9c1;
+  --color-teal-500: #0f8b8d;
+  --color-teal-600: #0c6f71;
+  --color-teal-700: #0a5859;
+
+  --color-sand-50: #fffaf5;
+  --color-sand-100: #fdf1e6;
+  --color-sand-200: #f8e3cf;
+
+  --color-ink-700: #4a3f36;
+  --color-ink-900: #2a2420;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-display: var(--font-baloo);
+  --font-sans: var(--font-inter);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-coral-50: var(--color-coral-50);
+  --color-coral-100: var(--color-coral-100);
+  --color-coral-300: var(--color-coral-300);
+  --color-coral-500: var(--color-coral-500);
+  --color-coral-600: var(--color-coral-600);
+  --color-coral-700: var(--color-coral-700);
+
+  --color-teal-50: var(--color-teal-50);
+  --color-teal-100: var(--color-teal-100);
+  --color-teal-300: var(--color-teal-300);
+  --color-teal-500: var(--color-teal-500);
+  --color-teal-600: var(--color-teal-600);
+  --color-teal-700: var(--color-teal-700);
+
+  --color-sand-50: var(--color-sand-50);
+  --color-sand-100: var(--color-sand-100);
+  --color-sand-200: var(--color-sand-200);
+
+  --color-ink-700: var(--color-ink-700);
+  --color-ink-900: var(--color-ink-900);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-baloo), var(--font-inter), sans-serif;
+}
+
+.pill-scroll {
+  scrollbar-width: none;
+}
+.pill-scroll::-webkit-scrollbar {
+  display: none;
 }

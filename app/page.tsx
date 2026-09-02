@@ -1,69 +1,71 @@
-import Image from "next/image";
+import SearchBar from "@/components/SearchBar";
+import PopularSearchPills from "@/components/PopularSearchPills";
+import DestinationGrid from "@/components/DestinationGrid";
+import PropertyCard from "@/components/PropertyCard";
+import HostCtaBanner from "@/components/HostCtaBanner";
+import { ensureSeeded } from "@/lib/ensure-seed";
+import { getAllListings } from "@/lib/kv";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  await ensureSeeded();
+  const listings = await getAllListings();
+  const featured = listings.filter((l) => l.rating >= 4.8).slice(0, 6);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div>
+      <section className="relative">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/hero-banner.jpg"
+          alt="Pueblo mediterráneo junto al mar"
+          className="h-[420px] w-full object-cover sm:h-[480px]"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+        <div className="absolute inset-0 bg-gradient-to-b from-ink-900/40 via-ink-900/10 to-sand-50" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+          <h1 className="font-display max-w-2xl text-3xl font-extrabold text-white drop-shadow sm:text-5xl">
+            Encuentra tu próxima casita de vacaciones
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-3 max-w-lg text-sm text-white/90 sm:text-base">
+            Apartamentos, villas y casas rurales en España y Europa, con pagos flexibles y
+            seguros.
           </p>
+          <div className="mt-6 w-full px-2">
+            <SearchBar />
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        <h2 className="mb-3 font-display text-sm font-bold uppercase tracking-wide text-ink-700">
+          Búsquedas populares
+        </h2>
+        <PopularSearchPills />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+        <h2 className="mb-4 font-display text-2xl font-bold text-ink-900">Explora por destino</h2>
+        <DestinationGrid />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <div className="mb-4 flex items-baseline justify-between">
+          <h2 className="font-display text-2xl font-bold text-ink-900">Las mejor valoradas</h2>
+          <a href="/search" className="text-sm font-semibold text-teal-600 hover:underline">
+            Ver todas →
           </a>
         </div>
-      </main>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {featured.map((listing) => (
+            <PropertyCard key={listing.id} listing={listing} />
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+        <HostCtaBanner />
+      </section>
     </div>
   );
 }
