@@ -4,12 +4,12 @@ import type { Listing } from "@/lib/types";
 import BookingWidget from "@/components/BookingWidget";
 
 const AMENITY_LABEL: Record<string, { label: string; icon: string }> = {
-  pool: { label: "Piscina privada", icon: "/images/icon-pool.png" },
-  "pet-friendly": { label: "Admite mascotas", icon: "/images/icon-pet-friendly.png" },
-  "sea-view": { label: "Vistas al mar", icon: "/images/icon-sea-view.png" },
-  wifi: { label: "Wifi de alta velocidad", icon: "/images/icon-wifi.png" },
-  kitchen: { label: "Cocina equipada", icon: "/images/icon-kitchen.png" },
-  parking: { label: "Parking privado", icon: "/images/icon-parking.png" },
+  pool: { label: "Piscina privada", icon: "/images/icon-pool.jpeg" },
+  "pet-friendly": { label: "Admite mascotas", icon: "/images/icon-pet-friendly.jpeg" },
+  "sea-view": { label: "Vistas al mar", icon: "/images/icon-sea-view.jpeg" },
+  wifi: { label: "Wifi de alta velocidad", icon: "/images/icon-wifi.jpeg" },
+  kitchen: { label: "Cocina equipada", icon: "/images/icon-kitchen.jpeg" },
+  parking: { label: "Parking privado", icon: "/images/icon-parking.jpeg" },
 };
 
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
@@ -51,7 +51,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           <div className="flex items-center gap-3 border-b border-sand-200 pb-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/images/host-portrait.png"
+              src="/images/host-portrait.jpeg"
               alt={listing.hostName}
               className="h-14 w-14 rounded-full object-cover"
             />

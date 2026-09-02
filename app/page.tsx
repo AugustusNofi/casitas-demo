@@ -14,7 +14,7 @@ export default function HomePage() {
       <section className="relative">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/hero-banner.png"
+          src="/images/hero-banner.jpeg"
           alt="Pueblo mediterráneo junto al mar"
           className="h-[420px] w-full object-cover sm:h-[480px]"
         />

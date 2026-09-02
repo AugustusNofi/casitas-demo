@@ -16,7 +16,7 @@ export default function HostCtaBanner() {
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/images/host-portrait.png"
+          src="/images/host-portrait.jpeg"
           alt="Anfitrión de Casitas"
           className="h-full max-h-64 w-full object-cover sm:w-72"
         />
